@@ -122,3 +122,18 @@ test('技名に「の」が入っても読める', () => {
   assert.strictEqual(b.current.move, 'りゅうのはどう');
   assert.deepStrictEqual(b.sides.me.mons['カイリュー'].moves, ['りゅうのはどう']);
 });
+
+test('急所:「急所に 当たった!」(ふりがなが混ざっても)を直前の攻撃に記録する', () => {
+  const b = new Battle({party: team6, opponentTeam: ['アーマーガア']});
+  b.feedAll([
+    T('ゆけっ! カバルドン!'),
+    T('相手トレーナーは アーマーガアを 繰り出した!'),
+    T('相手の アーマーガアの ブレイブバード!'),
+    {kind: 'hp', side: 'me', name: 'カバルドン', cur: 118, max: 215},
+    T('きゅうしょ あ 急所に 当たった!'),
+  ]);
+  assert.strictEqual(b.damageLog.length, 1);
+  assert.strictEqual(b.damageLog[0].crit, true);
+  assert.strictEqual(b.damageLog[0].damage.hp, 97);
+  assert.strictEqual(b.toCalcInput(b.damageLog[0]).moveOptions.isCrit, true);
+});
