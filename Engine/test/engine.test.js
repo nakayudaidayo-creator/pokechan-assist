@@ -99,3 +99,12 @@ test('実戦の記録:いかくを受けたイダイトウのウェーブタッ�
   assert.ok(frail.minPercent > 19, '無振りなら19%より多く削れるはず');
   assert.ok(bulky.minPercent <= 19 && 19 <= bulky.maxPercent + 1, '物理耐久に振ったボーマンダなら19%に収まる');
 });
+
+test('技:おはかまいりは味方がひん死になるごとに威力が50ずつ上がる(最大300)', () => {
+  const lr = n => dmg(mine('イダイトウ'), {name: 'ギルガルド'}, 'おはかまいり', {moveOptions: {fainted: n}});
+  const r0 = lr(0), r1 = lr(1), r2 = lr(2), r5 = lr(5), r9 = lr(9);
+  assert.ok(Math.abs(mid(r1) / mid(r0) / 2 - 1) < 0.05, '1体で威力100(2倍)');
+  assert.ok(Math.abs(mid(r2) / mid(r0) / 3 - 1) < 0.05, '2体で威力150(3倍)');
+  assert.ok(Math.abs(mid(r5) / mid(r0) / 6 - 1) < 0.05, '5体で威力300(6倍)');
+  assert.strictEqual(r9.max, r5.max, '300で打ち止め');
+});

@@ -136,13 +136,37 @@ function makeField(f) {
   });
 }
 
+/**
+ * 状況で威力が変わる技のうち、元の計算が扱っていないものの威力を決める。
+ *   おはかまいり:50 + 50 × 味方のひん死の数(最大300)
+ *   ふんどのこぶし:50 + 50 × 攻撃を受けた回数(最大350)
+ */
+function variablePower(moveName, opts) {
+  if (moveName === 'Last Respects') {
+    const n = Math.max(0, Math.min(5, opts.fainted || 0));
+    return 50 + 50 * n;
+  }
+  if (moveName === 'Rage Fist') {
+    const n = Math.max(0, Math.min(6, opts.timesHit || 0));
+    return 50 + 50 * n;
+  }
+  return undefined;
+}
+
+/**
+ * @param {object} opts
+ *   isCrit: 急所   hits: 連続技の回数
+ *   fainted: 味方のひん死の数(おはかまいり)   timesHit: 攻撃を受けた回数(ふんどのこぶし)
+ */
 function makeMove(name, opts) {
   opts = opts || {};
+  const en = lookup(NAMES.moves, 'move', name);
   const m = {};
   if (opts.isCrit) m.isCrit = true;
   if (opts.hits) m.hits = opts.hits;
-  if (opts.timesUsed) m.timesUsed = opts.timesUsed; // おはかまいりの倒れた数などは別指定
-  return new calc.Move(GEN, lookup(NAMES.moves, 'move', name), m);
+  const bp = variablePower(en, opts);
+  if (bp !== undefined) m.overrides = {basePower: bp};
+  return new calc.Move(GEN, en, m);
 }
 
 // ---- 計算 -------------------------------------------------------------
