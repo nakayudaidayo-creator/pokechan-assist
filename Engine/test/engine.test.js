@@ -108,3 +108,13 @@ test('技:おはかまいりは味方がひん死になるごとに威力が50�
   assert.ok(Math.abs(mid(r5) / mid(r0) / 6 - 1) < 0.05, '5体で威力300(6倍)');
   assert.strictEqual(r9.max, r5.max, '300で打ち止め');
 });
+
+test('技:はたきおとすは相手が持ち物を持っていると威力1.5倍(外せないメガストーンは対象外)', () => {
+  const atk = {name: 'バンギラス', nature: 'いじっぱり', sp: {atk: 32}};
+  const none = dmg(atk, {name: 'アシレーヌ'}, 'はたきおとす');
+  const held = dmg(atk, {name: 'アシレーヌ', item: 'たべのこし'}, 'はたきおとす');
+  assert.ok(Math.abs(mid(held) / mid(none) / 1.5 - 1) < 0.05, '持ち物ありで1.5倍');
+  const megaNone = dmg(atk, {name: 'ゲンガー', form: 'Gengar-Mega'}, 'はたきおとす');
+  const megaStone = dmg(atk, {name: 'ゲンガー', form: 'Gengar-Mega', item: 'ゲンガナイト'}, 'はたきおとす');
+  assert.strictEqual(megaStone.max, megaNone.max, 'メガシンカ後のメガストーンは落とせないので上がらない');
+});
