@@ -17,8 +17,14 @@ targets:
     type: application
     platform: iOS
     sources:
-      - App
+      - path: App
+        excludes:
+          - "Resources/**"
       - Shared
+      - path: App/Resources
+        buildPhase: resources
+      - path: Data/party.json
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: jp.local.pokechanassist

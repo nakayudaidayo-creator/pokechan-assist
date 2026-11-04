@@ -1,20 +1,19 @@
 import AVKit
 import UIKit
 
-/// 小窓(ピクチャ・イン・ピクチャ)に文字を描画して表示する。
-/// 動画の代わりに、文字を描いた画像を0.5秒ごとに流し込む。
+/// 小窓(ピクチャ・イン・ピクチャ)に画像を表示する。
+/// 動画の代わりに、描いた画像を0.5秒ごとに流し込む。
 final class PiPController: NSObject, ObservableObject {
     let displayLayer = AVSampleBufferDisplayLayer()
 
     @Published var isActive = false
     @Published var lastError: String?
 
-    /// 小窓に表示する行。呼ばれるたびに最新の内容を返す
-    var linesProvider: () -> [String] = { ["待機中"] }
+    /// 小窓に表示する画像。呼ばれるたびに最新の内容を返す
+    var imageProvider: () -> UIImage = { PipRenderer.render(.message("待機中")) }
 
     private var pipController: AVPictureInPictureController?
     private var timer: Timer?
-    private let renderSize = CGSize(width: 480, height: 200)
 
     func setup() {
         guard pipController == nil else { return }
@@ -64,7 +63,7 @@ final class PiPController: NSObject, ObservableObject {
     // MARK: - 描画
 
     private func renderFrame() {
-        let image = drawImage(lines: linesProvider())
+        let image = imageProvider()
         guard let pixelBuffer = makePixelBuffer(from: image),
               let sampleBuffer = makeSampleBuffer(from: pixelBuffer) else { return }
 
@@ -72,29 +71,6 @@ final class PiPController: NSObject, ObservableObject {
             displayLayer.flush()
         }
         displayLayer.enqueue(sampleBuffer)
-    }
-
-    private func drawImage(lines: [String]) -> UIImage {
-        let format = UIGraphicsImageRendererFormat()
-        format.scale = 2
-        let renderer = UIGraphicsImageRenderer(size: renderSize, format: format)
-        return renderer.image { context in
-            UIColor.black.setFill()
-            context.fill(CGRect(origin: .zero, size: renderSize))
-
-            var y: CGFloat = 14
-            for (index, line) in lines.enumerated() {
-                let font = index == 0
-                    ? UIFont.boldSystemFont(ofSize: 26)
-                    : UIFont.systemFont(ofSize: 21)
-                let attributes: [NSAttributedString.Key: Any] = [
-                    .font: font,
-                    .foregroundColor: UIColor.white
-                ]
-                (line as NSString).draw(at: CGPoint(x: 16, y: y), withAttributes: attributes)
-                y += font.lineHeight + 6
-            }
-        }
     }
 
     private func makePixelBuffer(from image: UIImage) -> CVPixelBuffer? {

@@ -1,11 +1,15 @@
 import Foundation
 import Network
 
-/// 画面録画の拡張機能から端末内通信(UDP)で送られてくる文字列を受け取る
+/// 画面録画の拡張機能から端末内通信(UDP)で送られてくる内容を受け取る。
+/// JSON(読み取った入力の配列)なら onInputs に渡し、それ以外は状況表示として扱う。
 final class BroadcastReceiver: ObservableObject {
     @Published var lastMessage = "まだ受信なし"
     @Published var receivedCount = 0
     @Published var status = "停止中"
+
+    /// 読み取った入力の配列([{"kind":"telop","text":"…"}, …])を受け取ったとき
+    var onInputs: (([[String: Any]]) -> Void)?
 
     private var listener: NWListener?
 
@@ -39,13 +43,22 @@ final class BroadcastReceiver: ObservableObject {
 
     private func receive(on connection: NWConnection) {
         connection.receiveMessage { [weak self] data, _, _, error in
-            if let data, let text = String(data: data, encoding: .utf8) {
-                self?.lastMessage = text
-                self?.receivedCount += 1
+            if let data {
+                self?.handle(data)
             }
             if error == nil {
                 self?.receive(on: connection)
             }
+        }
+    }
+
+    private func handle(_ data: Data) {
+        receivedCount += 1
+        if let inputs = (try? JSONSerialization.jsonObject(with: data)) as? [[String: Any]] {
+            lastMessage = "読み取り \(inputs.count)件"
+            if !inputs.isEmpty { onInputs?(inputs) }
+        } else if let text = String(data: data, encoding: .utf8) {
+            lastMessage = text
         }
     }
 }
