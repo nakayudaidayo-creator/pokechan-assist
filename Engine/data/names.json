@@ -1,0 +1,1782 @@
+{
+ "species": {
+  "ユキノオー": [
+   "Abomasnow",
+   "Abomasnow-Mega"
+  ],
+  "アブソル": [
+   "Absol",
+   "Absol-Mega",
+   "Absol-Mega-Z"
+  ],
+  "ギルガルド": [
+   "Aegislash-Blade",
+   "Aegislash-Both",
+   "Aegislash-Shield"
+  ],
+  "プテラ": [
+   "Aerodactyl",
+   "Aerodactyl-Mega"
+  ],
+  "ボスゴドラ": [
+   "Aggron",
+   "Aggron-Mega"
+  ],
+  "フーディン": [
+   "Alakazam",
+   "Alakazam-Mega"
+  ],
+  "マホイップ": [
+   "Alcremie"
+  ],
+  "チルタリス": [
+   "Altaria",
+   "Altaria-Mega"
+  ],
+  "デンリュウ": [
+   "Ampharos",
+   "Ampharos-Mega"
+  ],
+  "コノヨザル": [
+   "Annihilape"
+  ],
+  "タルップル": [
+   "Appletun"
+  ],
+  "オニシズクモ": [
+   "Araquanid"
+  ],
+  "アーボック": [
+   "Arbok"
+  ],
+  "オリーヴァ": [
+   "Arboliva"
+  ],
+  "ウインディ": [
+   "Arcanine",
+   "Arcanine-Hisui"
+  ],
+  "ブリジュラス": [
+   "Archaludon"
+  ],
+  "アリアドス": [
+   "Ariados"
+  ],
+  "グレンアルマ": [
+   "Armarouge"
+  ],
+  "フレフワン": [
+   "Aromatisse"
+  ],
+  "タブンネ": [
+   "Audino",
+   "Audino-Mega"
+  ],
+  "アマルルガ": [
+   "Aurorus"
+  ],
+  "クレベース": [
+   "Avalugg",
+   "Avalugg-Hisui"
+  ],
+  "マリルリ": [
+   "Azumarill"
+  ],
+  "ジュペッタ": [
+   "Banette",
+   "Banette-Mega"
+  ],
+  "ガメノデス": [
+   "Barbaracle",
+   "Barbaracle-Mega"
+  ],
+  "イダイトウ": [
+   "Basculegion",
+   "Basculegion-F"
+  ],
+  "トリデプス": [
+   "Bastiodon"
+  ],
+  "セグレイブ": [
+   "Baxcalibur",
+   "Baxcalibur-Mega"
+  ],
+  "ツンベアー": [
+   "Beartic"
+  ],
+  "スピアー": [
+   "Beedrill",
+   "Beedrill-Mega"
+  ],
+  "ハラバリー": [
+   "Bellibolt"
+  ],
+  "カメックス": [
+   "Blastoise",
+   "Blastoise-Mega"
+  ],
+  "バシャーモ": [
+   "Blaziken",
+   "Blaziken-Mega"
+  ],
+  "バクーダ": [
+   "Camerupt",
+   "Camerupt-Mega"
+  ],
+  "ポワルン": [
+   "Castform",
+   "Castform-Rainy",
+   "Castform-Snowy",
+   "Castform-Sunny"
+  ],
+  "ソウブレイズ": [
+   "Ceruledge"
+  ],
+  "シャンデラ": [
+   "Chandelure",
+   "Chandelure-Mega"
+  ],
+  "リザードン": [
+   "Charizard",
+   "Charizard-Mega-X",
+   "Charizard-Mega-Y"
+  ],
+  "ブリガロン": [
+   "Chesnaught",
+   "Chesnaught-Mega"
+  ],
+  "チリーン": [
+   "Chimecho",
+   "Chimecho-Mega"
+  ],
+  "エースバーン": [
+   "Cinderace"
+  ],
+  "ブロスター": [
+   "Clawitzer"
+  ],
+  "ピクシー": [
+   "Clefable",
+   "Clefable-Mega"
+  ],
+  "デスカーン": [
+   "Cofagrigus"
+  ],
+  "ローブシン": [
+   "Conkeldurr"
+  ],
+  "アーマーガア": [
+   "Corviknight"
+  ],
+  "ケケンカニ": [
+   "Crabominable",
+   "Crabominable-Mega"
+  ],
+  "ジュナイパー": [
+   "Decidueye",
+   "Decidueye-Hisui"
+  ],
+  "デデンネ": [
+   "Dedenne"
+  ],
+  "マフォクシー": [
+   "Delphox",
+   "Delphox-Mega"
+  ],
+  "ホルード": [
+   "Diggersby"
+  ],
+  "メタモン": [
+   "Ditto"
+  ],
+  "ドラミドロ": [
+   "Dragalge",
+   "Dragalge-Mega"
+  ],
+  "ドラパルト": [
+   "Dragapult"
+  ],
+  "カイリュー": [
+   "Dragonite",
+   "Dragonite-Mega"
+  ],
+  "ジジーロン": [
+   "Drampa",
+   "Drampa-Mega"
+  ],
+  "シビルドン": [
+   "Eelektross",
+   "Eelektross-Mega"
+  ],
+  "エンブオー": [
+   "Emboar",
+   "Emboar-Mega"
+  ],
+  "エモンガ": [
+   "Emolga"
+  ],
+  "エンペルト": [
+   "Empoleon"
+  ],
+  "クエスパトラ": [
+   "Espathra"
+  ],
+  "エーフィ": [
+   "Espeon"
+  ],
+  "ドリュウズ": [
+   "Excadrill",
+   "Excadrill-Mega"
+  ],
+  "タイレーツ": [
+   "Falinks",
+   "Falinks-Mega"
+  ],
+  "カモネギ": [
+   "Farfetch’d"
+  ],
+  "リキキリン": [
+   "Farigiraf"
+  ],
+  "オーダイル": [
+   "Feraligatr",
+   "Feraligatr-Mega"
+  ],
+  "アップリュー": [
+   "Flapple"
+  ],
+  "ブースター": [
+   "Flareon"
+  ],
+  "フラエッテ": [
+   "Floette-Eternal",
+   "Floette-Mega"
+  ],
+  "フラージェス": [
+   "Florges"
+  ],
+  "フォレトス": [
+   "Forretress"
+  ],
+  "ユキメノコ": [
+   "Froslass",
+   "Froslass-Mega"
+  ],
+  "トリミアン": [
+   "Furfrou"
+  ],
+  "エルレイド": [
+   "Gallade",
+   "Gallade-Mega"
+  ],
+  "ダストダス": [
+   "Garbodor"
+  ],
+  "ガブリアス": [
+   "Garchomp",
+   "Garchomp-Mega",
+   "Garchomp-Mega-Z"
+  ],
+  "サーナイト": [
+   "Gardevoir",
+   "Gardevoir-Mega"
+  ],
+  "キョジオーン": [
+   "Garganacl"
+  ],
+  "ゲンガー": [
+   "Gengar",
+   "Gengar-Mega"
+  ],
+  "サーフゴー": [
+   "Gholdengo"
+  ],
+  "グレイシア": [
+   "Glaceon"
+  ],
+  "オニゴーリ": [
+   "Glalie",
+   "Glalie-Mega"
+  ],
+  "キラフロル": [
+   "Glimmora",
+   "Glimmora-Mega"
+  ],
+  "グライオン": [
+   "Gliscor"
+  ],
+  "ゴーゴート": [
+   "Gogoat"
+  ],
+  "グソクムシャ": [
+   "Golisopod",
+   "Golisopod-Mega"
+  ],
+  "ゴルーグ": [
+   "Golurk",
+   "Golurk-Mega"
+  ],
+  "ヌメルゴン": [
+   "Goodra",
+   "Goodra-Hisui"
+  ],
+  "パンプジン": [
+   "Gourgeist",
+   "Gourgeist-Large",
+   "Gourgeist-Small",
+   "Gourgeist-Super"
+  ],
+  "オトスパス": [
+   "Grapploct"
+  ],
+  "ゲッコウガ": [
+   "Greninja",
+   "Greninja-Mega"
+  ],
+  "オーロンゲ": [
+   "Grimmsnarl"
+  ],
+  "ギャラドス": [
+   "Gyarados",
+   "Gyarados-Mega"
+  ],
+  "ブリムオン": [
+   "Hatterene"
+  ],
+  "ルチャブル": [
+   "Hawlucha",
+   "Hawlucha-Mega"
+  ],
+  "エレザード": [
+   "Heliolisk"
+  ],
+  "ヘラクロス": [
+   "Heracross",
+   "Heracross-Mega"
+  ],
+  "カバルドン": [
+   "Hippowdon"
+  ],
+  "ヘルガー": [
+   "Houndoom",
+   "Houndoom-Mega"
+  ],
+  "ハカドッグ": [
+   "Houndstone"
+  ],
+  "カミツオロチ": [
+   "Hydrapple"
+  ],
+  "サザンドラ": [
+   "Hydreigon"
+  ],
+  "ガオガエン": [
+   "Incineroar"
+  ],
+  "イエッサン": [
+   "Indeedee",
+   "Indeedee-F"
+  ],
+  "ゴウカザル": [
+   "Infernape"
+  ],
+  "インテレオン": [
+   "Inteleon"
+  ],
+  "サンダース": [
+   "Jolteon"
+  ],
+  "ガルーラ": [
+   "Kangaskhan",
+   "Kangaskhan-Mega"
+  ],
+  "ドドゲザン": [
+   "Kingambit"
+  ],
+  "バサギリ": [
+   "Kleavor"
+  ],
+  "クレッフィ": [
+   "Klefki"
+  ],
+  "ジャラランガ": [
+   "Kommo-o"
+  ],
+  "ワルビアル": [
+   "Krookodile"
+  ],
+  "リーフィア": [
+   "Leafeon"
+  ],
+  "レパルダス": [
+   "Liepard"
+  ],
+  "ミミロップ": [
+   "Lopunny",
+   "Lopunny-Mega"
+  ],
+  "ルカリオ": [
+   "Lucario",
+   "Lucario-Mega",
+   "Lucario-Mega-Z"
+  ],
+  "レントラー": [
+   "Luxray"
+  ],
+  "ルガルガン": [
+   "Lycanroc",
+   "Lycanroc-Dusk",
+   "Lycanroc-Midnight"
+  ],
+  "マフィティフ": [
+   "Mabosstiff"
+  ],
+  "カイリキー": [
+   "Machamp"
+  ],
+  "カラマネロ": [
+   "Malamar",
+   "Malamar-Mega"
+  ],
+  "マンムー": [
+   "Mamoswine"
+  ],
+  "ライボルト": [
+   "Manectric",
+   "Manectric-Mega"
+  ],
+  "イッカネズミ": [
+   "Maushold",
+   "Maushold-Four"
+  ],
+  "クチート": [
+   "Mawile",
+   "Mawile-Mega"
+  ],
+  "チャーレム": [
+   "Medicham",
+   "Medicham-Mega"
+  ],
+  "メガニウム": [
+   "Meganium",
+   "Meganium-Mega"
+  ],
+  "マスカーニャ": [
+   "Meowscarada"
+  ],
+  "ニャオニクス": [
+   "Meowstic",
+   "Meowstic-F",
+   "Meowstic-F-Mega",
+   "Meowstic-M-Mega"
+  ],
+  "メタグロス": [
+   "Metagross",
+   "Metagross-Mega"
+  ],
+  "ミロカロス": [
+   "Milotic"
+  ],
+  "ミミッキュ": [
+   "Mimikyu",
+   "Mimikyu-Busted"
+  ],
+  "モルペコ": [
+   "Morpeko",
+   "Morpeko-Hangry"
+  ],
+  "バリヤード": [
+   "Mr. Mime"
+  ],
+  "バリコオル": [
+   "Mr. Rime"
+  ],
+  "バンバドロ": [
+   "Mudsdale"
+  ],
+  "ムシャーナ": [
+   "Musharna"
+  ],
+  "キュウコン": [
+   "Ninetales",
+   "Ninetales-Alola"
+  ],
+  "オンバーン": [
+   "Noivern"
+  ],
+  "ヤレユータン": [
+   "Oranguru"
+  ],
+  "ミミズズ": [
+   "Orthworm"
+  ],
+  "ハリーマン": [
+   "Overqwil"
+  ],
+  "イルカマン": [
+   "Palafin",
+   "Palafin-Hero"
+  ],
+  "ゴロンダ": [
+   "Pangoro"
+  ],
+  "ナゲツケサル": [
+   "Passimian"
+  ],
+  "パーモット": [
+   "Pawmot"
+  ],
+  "ペリッパー": [
+   "Pelipper"
+  ],
+  "ニャイキング": [
+   "Perrserker"
+  ],
+  "ペルシアン": [
+   "Persian",
+   "Persian-Alola"
+  ],
+  "ピジョット": [
+   "Pidgeot",
+   "Pidgeot-Mega"
+  ],
+  "ピカチュウ": [
+   "Pikachu"
+  ],
+  "バチンウニ": [
+   "Pincurchin"
+  ],
+  "カイロス": [
+   "Pinsir",
+   "Pinsir-Mega"
+  ],
+  "ニョロトノ": [
+   "Politoed"
+  ],
+  "ポットデス": [
+   "Polteageist",
+   "Polteageist-Antique"
+  ],
+  "アシレーヌ": [
+   "Primarina"
+  ],
+  "カエンジシ": [
+   "Pyroar",
+   "Pyroar-Mega"
+  ],
+  "ウェーニバル": [
+   "Quaquaval"
+  ],
+  "ハリーセン": [
+   "Qwilfish"
+  ],
+  "ライチュウ": [
+   "Raichu",
+   "Raichu-Alola",
+   "Raichu-Mega-X",
+   "Raichu-Mega-Y"
+  ],
+  "ラムパルド": [
+   "Rampardos"
+  ],
+  "ランクルス": [
+   "Reuniclus"
+  ],
+  "ドサイドン": [
+   "Rhyperior"
+  ],
+  "ゴリランダー": [
+   "Rillaboom"
+  ],
+  "ロズレイド": [
+   "Roserade"
+  ],
+  "ロトム": [
+   "Rotom",
+   "Rotom-Fan",
+   "Rotom-Frost",
+   "Rotom-Heat",
+   "Rotom-Mow",
+   "Rotom-Wash"
+  ],
+  "デスバーン": [
+   "Runerigus"
+  ],
+  "ヤミラミ": [
+   "Sableye",
+   "Sableye-Mega"
+  ],
+  "ボーマンダ": [
+   "Salamence",
+   "Salamence-Mega"
+  ],
+  "エンニュート": [
+   "Salazzle"
+  ],
+  "ダイケンキ": [
+   "Samurott",
+   "Samurott-Hisui"
+  ],
+  "サダイジャ": [
+   "Sandaconda"
+  ],
+  "ジュカイン": [
+   "Sceptile",
+   "Sceptile-Mega"
+  ],
+  "ハッサム": [
+   "Scizor",
+   "Scizor-Mega"
+  ],
+  "ペンドラー": [
+   "Scolipede",
+   "Scolipede-Mega"
+  ],
+  "スコヴィラン": [
+   "Scovillain",
+   "Scovillain-Mega"
+  ],
+  "ズルズキン": [
+   "Scrafty",
+   "Scrafty-Mega"
+  ],
+  "ジャローダ": [
+   "Serperior"
+  ],
+  "サメハダー": [
+   "Sharpedo",
+   "Sharpedo-Mega"
+  ],
+  "ヒヤッキー": [
+   "Simipour"
+  ],
+  "ヤナッキー": [
+   "Simisage"
+  ],
+  "バオッキー": [
+   "Simisear"
+  ],
+  "ヤバソチャ": [
+   "Sinistcha",
+   "Sinistcha-Masterpiece"
+  ],
+  "ネギガナイト": [
+   "Sirfetch’d"
+  ],
+  "エアームド": [
+   "Skarmory",
+   "Skarmory-Mega"
+  ],
+  "ラウドボーン": [
+   "Skeledirge"
+  ],
+  "ヤドラン": [
+   "Slowbro",
+   "Slowbro-Galar",
+   "Slowbro-Mega"
+  ],
+  "ヤドキング": [
+   "Slowking",
+   "Slowking-Galar"
+  ],
+  "ペロリーム": [
+   "Slurpuff"
+  ],
+  "オオニューラ": [
+   "Sneasler"
+  ],
+  "カビゴン": [
+   "Snorlax"
+  ],
+  "ミカルゲ": [
+   "Spiritomb"
+  ],
+  "イキリンコ": [
+   "Squawkabilly",
+   "Squawkabilly-Blue",
+   "Squawkabilly-White",
+   "Squawkabilly-Yellow"
+  ],
+  "ムクホーク": [
+   "Staraptor",
+   "Staraptor-Mega"
+  ],
+  "スターミー": [
+   "Starmie",
+   "Starmie-Mega"
+  ],
+  "ハガネール": [
+   "Steelix",
+   "Steelix-Mega"
+  ],
+  "マッギョ": [
+   "Stunfisk",
+   "Stunfisk-Galar"
+  ],
+  "マルノーム": [
+   "Swalot"
+  ],
+  "ラグラージ": [
+   "Swampert",
+   "Swampert-Mega"
+  ],
+  "ニンフィア": [
+   "Sylveon"
+  ],
+  "ファイアロー": [
+   "Talonflame"
+  ],
+  "ケンタロス": [
+   "Tauros",
+   "Tauros-Paldea-Aqua",
+   "Tauros-Paldea-Blaze",
+   "Tauros-Paldea-Combat"
+  ],
+  "フォクスライ": [
+   "Thievul"
+  ],
+  "デカヌチャン": [
+   "Tinkaton"
+  ],
+  "コータス": [
+   "Torkoal"
+  ],
+  "ドダイトス": [
+   "Torterra"
+  ],
+  "ドデカバシ": [
+   "Toucannon"
+  ],
+  "ドヒドイデ": [
+   "Toxapex"
+  ],
+  "ドクロッグ": [
+   "Toxicroak"
+  ],
+  "ストリンダー": [
+   "Toxtricity",
+   "Toxtricity-Low-Key"
+  ],
+  "オーロット": [
+   "Trevenant"
+  ],
+  "アマージョ": [
+   "Tsareena"
+  ],
+  "バクフーン": [
+   "Typhlosion",
+   "Typhlosion-Hisui"
+  ],
+  "バンギラス": [
+   "Tyranitar",
+   "Tyranitar-Mega"
+  ],
+  "ガチゴラス": [
+   "Tyrantrum"
+  ],
+  "ブラッキー": [
+   "Umbreon"
+  ],
+  "バイバニラ": [
+   "Vanilluxe"
+  ],
+  "シャワーズ": [
+   "Vaporeon"
+  ],
+  "フシギバナ": [
+   "Venusaur",
+   "Venusaur-Mega"
+  ],
+  "ウツボット": [
+   "Victreebel",
+   "Victreebel-Mega"
+  ],
+  "ラフレシア": [
+   "Vileplume"
+  ],
+  "ビビヨン": [
+   "Vivillon",
+   "Vivillon-Fancy",
+   "Vivillon-Pokeball"
+  ],
+  "ウルガモス": [
+   "Volcarona"
+  ],
+  "ミルホッグ": [
+   "Watchog"
+  ],
+  "マニューラ": [
+   "Weavile"
+  ],
+  "エルフーン": [
+   "Whimsicott"
+  ],
+  "プクリン": [
+   "Wigglytuff"
+  ],
+  "アヤシシ": [
+   "Wyrdeer"
+  ],
+  "ゾロアーク": [
+   "Zoroark",
+   "Zoroark-Hisui"
+  ]
+ },
+ "moves": {
+  "アクセルロック": "Accelerock",
+  "とける": "Acid Armor",
+  "アシッドボム": "Acid Spray",
+  "アクロバット": "Acrobatics",
+  "つぼをつく": "Acupressure",
+  "つばめがえし": "Aerial Ace",
+  "おさきにどうぞ": "After You",
+  "こうそくいどう": "Agility",
+  "エアカッター": "Air Cutter",
+  "エアスラッシュ": "Air Slash",
+  "みわくのボイス": "Alluring Voice",
+  "サイドチェンジ": "Ally Switch",
+  "ドわすれ": "Amnesia",
+  "げんしのちから": "Ancient Power",
+  "りんごさん": "Apple Acid",
+  "アクアカッター": "Aqua Cutter",
+  "アクアジェット": "Aqua Jet",
+  "アクアリング": "Aqua Ring",
+  "アクアステップ": "Aqua Step",
+  "アクアテール": "Aqua Tail",
+  "アーマーキャノン": "Armor Cannon",
+  "アロマミスト": "Aromatic Mist",
+  "ダメおし": "Assurance",
+  "メロメロ": "Attract",
+  "はどうだん": "Aura Sphere",
+  "オーラぐるま": "Aura Wheel",
+  "オーロラベール": "Aurora Veil",
+  "ゆきなだれ": "Avalanche",
+  "かかとおとし": "Axe Kick",
+  "つぶらなひとみ": "Baby-Doll Eyes",
+  "トーチカ": "Baneful Bunker",
+  "どくばりセンボン": "Barb Barrage",
+  "バトンタッチ": "Baton Pass",
+  "くちばしキャノン": "Beak Blast",
+  "ふくろだたき": "Beat Up",
+  "ゲップ": "Belch",
+  "はらだいこ": "Belly Drum",
+  "しめつける": "Bind",
+  "かみつく": "Bite",
+  "むねんのつるぎ": "Bitter Blade",
+  "うらみつらみ": "Bitter Malice",
+  "ブラストバーン": "Blast Burn",
+  "ブレイズキック": "Blaze Kick",
+  "ふぶき": "Blizzard",
+  "とおせんぼう": "Block",
+  "ボディプレス": "Body Press",
+  "のしかかり": "Body Slam",
+  "ボーンラッシュ": "Bone Rush",
+  "ばくおんぱ": "Boomburst",
+  "とびはねる": "Bounce",
+  "ブレイブバード": "Brave Bird",
+  "ワイドブレイカー": "Breaking Swipe",
+  "かわらわり": "Brick Break",
+  "ぶんまわす": "Brutal Swing",
+  "むしくい": "Bug Bite",
+  "むしのさざめき": "Bug Buzz",
+  "ビルドアップ": "Bulk Up",
+  "じならし": "Bulldoze",
+  "バレットパンチ": "Bullet Punch",
+  "タネマシンガン": "Bullet Seed",
+  "もえつきる": "Burn Up",
+  "しっとのほのお": "Burning Jealousy",
+  "めいそう": "Calm Mind",
+  "ひけん・ちえなみ": "Ceaseless Edge",
+  "じゅうでん": "Charge",
+  "チャージビーム": "Charge Beam",
+  "あまえる": "Charm",
+  "ひやみず": "Chilling Water",
+  "さむいギャグ": "Chilly Reception",
+  "ともえなげ": "Circle Throw",
+  "スケイルノイズ": "Clanging Scales",
+  "ソウルビート": "Clangorous Soul",
+  "クリアスモッグ": "Clear Smog",
+  "インファイト": "Close Combat",
+  "コーチング": "Coaching",
+  "とぐろをまく": "Coil",
+  "ほうふく": "Comeuppance",
+  "あやしいひかり": "Confuse Ray",
+  "まねっこ": "Copycat",
+  "ふしょくガス": "Corrosive Gas",
+  "コスモパワー": "Cosmic Power",
+  "コットンガード": "Cotton Guard",
+  "わたほうし": "Cotton Spore",
+  "カウンター": "Counter",
+  "コートチェンジ": "Court Change",
+  "ほしがる": "Covet",
+  "クラブハンマー": "Crabhammer",
+  "クロスチョップ": "Cross Chop",
+  "クロスポイズン": "Cross Poison",
+  "かみくだく": "Crunch",
+  "ブレイククロー": "Crush Claw",
+  "のろい": "Curse",
+  "あくのはどう": "Dark Pulse",
+  "DDラリアット": "Darkest Lariat",
+  "マジカルシャイン": "Dazzling Gleam",
+  "デコレーション": "Decorate",
+  "きりばらい": "Defog",
+  "みちづれ": "Destiny Bond",
+  "みきり": "Detect",
+  "あなをほる": "Dig",
+  "フェイタルクロー": "Dire Claw",
+  "かなしばり": "Disable",
+  "ほうでん": "Discharge",
+  "ダイビング": "Dive",
+  "ダブルアタック": "Double Hit",
+  "でんこうそうげき": "Double Shock",
+  "かげぶんしん": "Double Team",
+  "すてみタックル": "Double-Edge",
+  "りゅうせいぐん": "Draco Meteor",
+  "ドラゴンエール": "Dragon Cheer",
+  "ドラゴンクロー": "Dragon Claw",
+  "りゅうのまい": "Dragon Dance",
+  "ドラゴンアロー": "Dragon Darts",
+  "りゅうのはどう": "Dragon Pulse",
+  "ドラゴンダイブ": "Dragon Rush",
+  "ドラゴンテール": "Dragon Tail",
+  "ドレインパンチ": "Drain Punch",
+  "ドレインキッス": "Draining Kiss",
+  "ドリルくちばし": "Drill Peck",
+  "ドリルライナー": "Drill Run",
+  "ドラムアタック": "Drum Beating",
+  "ダブルウイング": "Dual Wingbeat",
+  "ばくれつパンチ": "Dynamic Punch",
+  "だいちのちから": "Earth Power",
+  "じしん": "Earthquake",
+  "かいでんぱ": "Eerie Impulse",
+  "ぶきみなじゅもん": "Eerie Spell",
+  "エレキフィールド": "Electric Terrain",
+  "そうでん": "Electrify",
+  "エレキボール": "Electro Ball",
+  "エレクトロビーム": "Electro Shot",
+  "エレキネット": "Electroweb",
+  "アンコール": "Encore",
+  "がむしゃら": "Endeavor",
+  "こらえる": "Endure",
+  "エナジーボール": "Energy Ball",
+  "なかまづくり": "Entrainment",
+  "ふんか": "Eruption",
+  "ワイドフォース": "Expanding Force",
+  "だいばくはつ": "Explosion",
+  "じんつうりき": "Extrasensory",
+  "しんそく": "Extreme Speed",
+  "からげんき": "Facade",
+  "フェアリーロック": "Fairy Lock",
+  "ねこだまし": "Fake Out",
+  "うそなき": "Fake Tears",
+  "フェザーダンス": "Feather Dance",
+  "フェイント": "Feint",
+  "とどめばり": "Fell Stinger",
+  "きまぐレーザー": "Fickle Beam",
+  "ほのおのまい": "Fiery Dance",
+  "いのちがけ": "Final Gambit",
+  "だいもんじ": "Fire Blast",
+  "ほのおのキバ": "Fire Fang",
+  "ほのおのムチ": "Fire Lash",
+  "ほのおのパンチ": "Fire Punch",
+  "ほのおのうず": "Fire Spin",
+  "であいがしら": "First Impression",
+  "じわれ": "Fissure",
+  "じたばた": "Flail",
+  "ニトロチャージ": "Flame Charge",
+  "かえんほうしゃ": "Flamethrower",
+  "フレアドライブ": "Flare Blitz",
+  "ラスターカノン": "Flash Cannon",
+  "おだてる": "Flatter",
+  "なげつける": "Fling",
+  "クイックターン": "Flip Turn",
+  "トリックフラワー": "Flower Trick",
+  "そらをとぶ": "Fly",
+  "フライングプレス": "Flying Press",
+  "きあいだま": "Focus Blast",
+  "きあいだめ": "Focus Energy",
+  "きあいパンチ": "Focus Punch",
+  "このゆびとまれ": "Follow Me",
+  "もりののろい": "Forest's Curse",
+  "イカサマ": "Foul Play",
+  "フリーズドライ": "Freeze-Dry",
+  "ハードプラント": "Frenzy Plant",
+  "こおりのいぶき": "Frost Breath",
+  "みらいよち": "Future Sight",
+  "いえき": "Gastro Acid",
+  "ギガドレイン": "Giga Drain",
+  "ギガインパクト": "Giga Impact",
+  "デカハンマー": "Gigaton Hammer",
+  "きょけんとつげき": "Glaive Rush",
+  "へびにらみ": "Glare",
+  "くさむすび": "Grass Knot",
+  "グラススライダー": "Grassy Glide",
+  "グラスフィールド": "Grassy Terrain",
+  "Gのちから": "Grav Apple",
+  "じゅうりょく": "Gravity",
+  "せいちょう": "Growth",
+  "ガードシェア": "Guard Split",
+  "ガードスワップ": "Guard Swap",
+  "ハサミギロチン": "Guillotine",
+  "ダストシュート": "Gunk Shot",
+  "ジャイロボール": "Gyro Ball",
+  "アームハンマー": "Hammer Arm",
+  "ハードプレス": "Hard Press",
+  "くろいきり": "Haze",
+  "もろはのずつき": "Head Smash",
+  "ぶちかまし": "Headlong Rush",
+  "いやしのすず": "Heal Bell",
+  "いやしのはどう": "Heal Pulse",
+  "いやしのねがい": "Healing Wish",
+  "ヒートスタンプ": "Heat Crash",
+  "ねっぷう": "Heat Wave",
+  "ヘビーボンバー": "Heavy Slam",
+  "てだすけ": "Helping Hand",
+  "たたりめ": "Hex",
+  "10まんばりき": "High Horsepower",
+  "とびひざげり": "High Jump Kick",
+  "つのドリル": "Horn Drill",
+  "ウッドホーン": "Horn Leech",
+  "とおぼえ": "Howl",
+  "ぼうふう": "Hurricane",
+  "ハイドロカノン": "Hydro Cannon",
+  "ハイドロポンプ": "Hydro Pump",
+  "はかいこうせん": "Hyper Beam",
+  "ハイパーボイス": "Hyper Voice",
+  "さいみんじゅつ": "Hypnosis",
+  "れいとうビーム": "Ice Beam",
+  "こおりのキバ": "Ice Fang",
+  "アイスハンマー": "Ice Hammer",
+  "れいとうパンチ": "Ice Punch",
+  "こおりのつぶて": "Ice Shard",
+  "アイススピナー": "Ice Spinner",
+  "つららおとし": "Icicle Crash",
+  "つららばり": "Icicle Spear",
+  "こごえるかぜ": "Icy Wind",
+  "ふういん": "Imprison",
+  "ひゃっきやこう": "Infernal Parade",
+  "れんごく": "Inferno",
+  "まとわりつく": "Infestation",
+  "ねをはる": "Ingrain",
+  "さいはい": "Instruct",
+  "てっぺき": "Iron Defense",
+  "アイアンヘッド": "Iron Head",
+  "アイアンテール": "Iron Tail",
+  "くらいつく": "Jaw Lock",
+  "ジェットパンチ": "Jet Punch",
+  "キングシールド": "King's Shield",
+  "はたきおとす": "Knock Off",
+  "ドゲザン": "Kowtow Cleave",
+  "うっぷんばらし": "Lash Out",
+  "とっておき": "Last Resort",
+  "おはかまいり": "Last Respects",
+  "ふんえん": "Lava Plume",
+  "リーフブレード": "Leaf Blade",
+  "リーフストーム": "Leaf Storm",
+  "きゅうけつ": "Leech Life",
+  "やどりぎのタネ": "Leech Seed",
+  "いのちのしずく": "Life Dew",
+  "ひかりのかべ": "Light Screen",
+  "はめつのひかり": "Light of Ruin",
+  "アクアブレイク": "Liquidation",
+  "ロックオン": "Lock-On",
+  "けたぐり": "Low Kick",
+  "ローキック": "Low Sweep",
+  "ルミナコリジョン": "Lumina Crash",
+  "とびかかる": "Lunge",
+  "マッハパンチ": "Mach Punch",
+  "まほうのこな": "Magic Powder",
+  "マジックルーム": "Magic Room",
+  "でんじふゆう": "Magnet Rise",
+  "じばそうさ": "Magnetic Flux",
+  "ゴールドラッシュ": "Make It Rain",
+  "シャカシャカほう": "Matcha Gotcha",
+  "くろいまなざし": "Mean Look",
+  "メガトンキック": "Mega Kick",
+  "メガホーン": "Megahorn",
+  "おきみやげ": "Memento",
+  "メタルバースト": "Metal Burst",
+  "きんぞくおん": "Metal Sound",
+  "スターアサルト": "Meteor Assault",
+  "メテオビーム": "Meteor Beam",
+  "コメットパンチ": "Meteor Mash",
+  "ミルクのみ": "Milk Drink",
+  "ちいさくなる": "Minimize",
+  "ミラーコート": "Mirror Coat",
+  "ミストバースト": "Misty Explosion",
+  "ミストフィールド": "Misty Terrain",
+  "ムーンフォース": "Moonblast",
+  "つきのひかり": "Moonlight",
+  "あさのひざし": "Morning Sun",
+  "キラースピン": "Mortal Spin",
+  "ひょうざんおろし": "Mountain Gale",
+  "マッドショット": "Mud Shot",
+  "どろかけ": "Mud-Slap",
+  "だくりゅう": "Muddy Water",
+  "マジカルフレイム": "Mystical Fire",
+  "わるだくみ": "Nasty Plot",
+  "ナイトバースト": "Night Daze",
+  "ナイトヘッド": "Night Shade",
+  "つじぎり": "Night Slash",
+  "はいすいのじん": "No Retreat",
+  "おたけび": "Noble Roar",
+  "ほっぺすりすり": "Nuzzle",
+  "たこがため": "Octolock",
+  "げきりん": "Outrage",
+  "オーバードライブ": "Overdrive",
+  "オーバーヒート": "Overheat",
+  "いたみわけ": "Pain Split",
+  "パラボラチャージ": "Parabolic Charge",
+  "すてゼリフ": "Parting Shot",
+  "しっぺがえし": "Payback",
+  "ほろびのうた": "Perish Song",
+  "はなふぶき": "Petal Blizzard",
+  "はなびらのまい": "Petal Dance",
+  "ゴーストダイブ": "Phantom Force",
+  "ミサイルばり": "Pin Missile",
+  "じゃれつく": "Play Rough",
+  "ついばむ": "Pluck",
+  "どくどくのキバ": "Poison Fang",
+  "どくづき": "Poison Jab",
+  "どくのこな": "Poison Powder",
+  "かふんだんご": "Pollen Puff",
+  "ポルターガイスト": "Poltergeist",
+  "ネズミざん": "Population Bomb",
+  "とびつく": "Pounce",
+  "パワージェム": "Power Gem",
+  "パワーシェア": "Power Split",
+  "パワースワップ": "Power Swap",
+  "パワートリック": "Power Trick",
+  "つけあがる": "Power Trip",
+  "パワーウィップ": "Power Whip",
+  "まもる": "Protect",
+  "じこあんじ": "Psych Up",
+  "サイコキネシス": "Psychic",
+  "サイコファング": "Psychic Fangs",
+  "サイコノイズ": "Psychic Noise",
+  "サイコフィールド": "Psychic Terrain",
+  "サイコカッター": "Psycho Cut",
+  "バリアーラッシュ": "Psyshield Bash",
+  "サイコショック": "Psyshock",
+  "かえんボール": "Pyro Ball",
+  "さきおくり": "Quash",
+  "でんこうせっか": "Quick Attack",
+  "ファストガード": "Quick Guard",
+  "ちょうのまい": "Quiver Dance",
+  "ふんどのこぶし": "Rage Fist",
+  "いかりのこな": "Rage Powder",
+  "レイジングブル": "Raging Bull",
+  "だいふんげき": "Raging Fury",
+  "あまごい": "Rain Dance",
+  "こうそくスピン": "Rapid Spin",
+  "シェルブレード": "Razor Shell",
+  "じこさいせい": "Recover",
+  "リサイクル": "Recycle",
+  "リフレクター": "Reflect",
+  "ミラータイプ": "Reflect Type",
+  "ねむる": "Rest",
+  "きしかいせい": "Reversal",
+  "さいきのいのり": "Revival Blessing",
+  "ライジングボルト": "Rising Voltage",
+  "ほえる": "Roar",
+  "ロックブラスト": "Rock Blast",
+  "ロックカット": "Rock Polish",
+  "いわなだれ": "Rock Slide",
+  "がんせきふうじ": "Rock Tomb",
+  "がんせきほう": "Rock Wrecker",
+  "なりきり": "Role Play",
+  "はねやすめ": "Roost",
+  "りんしょう": "Round",
+  "せいなるつるぎ": "Sacred Sword",
+  "しんぴのまもり": "Safeguard",
+  "しおづけ": "Salt Cure",
+  "すなじごく": "Sand Tomb",
+  "すなあらし": "Sandstorm",
+  "ねっとう": "Scald",
+  "スケイルショット": "Scale Shot",
+  "こわいかお": "Scary Face",
+  "ねっさのだいち": "Scorching Sands",
+  "いやなおと": "Screech",
+  "タネばくだん": "Seed Bomb",
+  "ちきゅうなげ": "Seismic Toss",
+  "じばく": "Self-Destruct",
+  "シャドーボール": "Shadow Ball",
+  "シャドークロー": "Shadow Claw",
+  "シャドーパンチ": "Shadow Punch",
+  "かげうち": "Shadow Sneak",
+  "しっぽきり": "Shed Tail",
+  "ぜったいれいど": "Sheer Cold",
+  "シェルアームズ": "Shell Side Arm",
+  "からをやぶる": "Shell Smash",
+  "たてこもる": "Shelter",
+  "ギアチェンジ": "Shift Gear",
+  "シンプルビーム": "Simple Beam",
+  "うたう": "Sing",
+  "スキルスワップ": "Skill Swap",
+  "はいよるいちげき": "Skitter Smack",
+  "ゴッドバード": "Sky Attack",
+  "なまける": "Slack Off",
+  "きりさく": "Slash",
+  "ねむりごな": "Sleep Powder",
+  "ねごと": "Sleep Talk",
+  "ヘドロばくだん": "Sludge Bomb",
+  "ヘドロウェーブ": "Sludge Wave",
+  "うちおとす": "Smack Down",
+  "スマートホーン": "Smart Strike",
+  "トラバサミ": "Snap Trap",
+  "バークアウト": "Snarl",
+  "ねらいうち": "Snipe Shot",
+  "いびき": "Snore",
+  "ゆきげしき": "Snowscape",
+  "みずびたし": "Soak",
+  "ソーラービーム": "Solar Beam",
+  "ソーラーブレード": "Solar Blade",
+  "うたかたのアリア": "Sparkling Aria",
+  "スピードスワップ": "Speed Swap",
+  "ハバネロエキス": "Spicy Extract",
+  "まきびし": "Spikes",
+  "ニードルガード": "Spiky Shield",
+  "ソウルクラッシュ": "Spirit Break",
+  "かげぬい": "Spirit Shackle",
+  "はきだす": "Spit Up",
+  "うらみ": "Spite",
+  "ステルスロック": "Stealth Rock",
+  "てっていこうせん": "Steel Beam",
+  "アイアンローラー": "Steel Roller",
+  "はがねのつばさ": "Steel Wing",
+  "ねばねばネット": "Sticky Web",
+  "たくわえる": "Stockpile",
+  "じだんだ": "Stomping Tantrum",
+  "がんせきアックス": "Stone Axe",
+  "ストーンエッジ": "Stone Edge",
+  "アシストパワー": "Stored Power",
+  "やまあらし": "Storm Throw",
+  "ちからをすいとる": "Strength Sap",
+  "いとをはく": "String Shot",
+  "わるあがき": "Struggle",
+  "むしのていこう": "Struggle Bug",
+  "ほおばる": "Stuff Cheeks",
+  "しびれごな": "Stun Spore",
+  "みがわり": "Substitute",
+  "ふいうち": "Sucker Punch",
+  "にほんばれ": "Sunny Day",
+  "いかりのまえば": "Super Fang",
+  "サンダーダイブ": "Supercell Slam",
+  "ばかぢから": "Superpower",
+  "なみのり": "Surf",
+  "いばる": "Swagger",
+  "のみこむ": "Swallow",
+  "てんしのキッス": "Sweet Kiss",
+  "あまいかおり": "Sweet Scent",
+  "すりかえ": "Switcheroo",
+  "つるぎのまい": "Swords Dance",
+  "こうごうせい": "Synthesis",
+  "みずあめボム": "Syrup Bomb",
+  "スイープビンタ": "Tail Slap",
+  "おいかぜ": "Tailwind",
+  "ちょうはつ": "Taunt",
+  "なみだめ": "Tearful Look",
+  "おちゃかい": "Teatime",
+  "フラフラダンス": "Teeter Dance",
+  "やけっぱち": "Temper Flare",
+  "だいちのはどう": "Terrain Pulse",
+  "どろぼう": "Thief",
+  "あばれる": "Thrash",
+  "じごくづき": "Throat Chop",
+  "かみなり": "Thunder",
+  "かみなりのキバ": "Thunder Fang",
+  "かみなりパンチ": "Thunder Punch",
+  "でんじは": "Thunder Wave",
+  "10まんボルト": "Thunderbolt",
+  "くすぐる": "Tickle",
+  "おかたづけ": "Tidy Up",
+  "ひっくりかえす": "Topsy-Turvy",
+  "フレアソング": "Torch Song",
+  "いちゃもん": "Torment",
+  "どくどく": "Toxic",
+  "どくびし": "Toxic Spikes",
+  "どくのいと": "Toxic Thread",
+  "くさわけ": "Trailblaze",
+  "へんしん": "Transform",
+  "トライアタック": "Tri Attack",
+  "トリック": "Trick",
+  "トリックルーム": "Trick Room",
+  "ハロウィン": "Trick-or-Treat",
+  "3ぼんのや": "Triple Arrows",
+  "トリプルアクセル": "Triple Axel",
+  "トロピカルキック": "Trop Kick",
+  "ツインビーム": "Twin Beam",
+  "とんぼがえり": "U-turn",
+  "はやてがえし": "Upper Hand",
+  "さわぐ": "Uproar",
+  "しんくうは": "Vacuum Wave",
+  "ベノムショック": "Venoshock",
+  "ボルトチェンジ": "Volt Switch",
+  "ボルテッカー": "Volt Tackle",
+  "みずのはどう": "Water Pulse",
+  "みずしゅりけん": "Water Shuriken",
+  "しおふき": "Water Spout",
+  "たきのぼり": "Waterfall",
+  "ウェーブタックル": "Wave Crash",
+  "ウェザーボール": "Weather Ball",
+  "うずしお": "Whirlpool",
+  "ふきとばし": "Whirlwind",
+  "ワイドガード": "Wide Guard",
+  "ワイルドボルト": "Wild Charge",
+  "おにび": "Will-O-Wisp",
+  "ねがいごと": "Wish",
+  "ワンダールーム": "Wonder Room",
+  "ウッドハンマー": "Wood Hammer",
+  "なやみのタネ": "Worry Seed",
+  "まきつく": "Wrap",
+  "シザークロス": "X-Scissor",
+  "あくび": "Yawn",
+  "でんじほう": "Zap Cannon",
+  "しねんのずつき": "Zen Headbutt",
+  "びりびりちくちく": "Zing Zap",
+  "アンカーショット": "Anchor Shot",
+  "アストラルビット": "Astral Barrage",
+  "ブラッドムーン": "Blood Moon",
+  "でんげきくちばし": "Bolt Beak",
+  "ドラゴンハンマー": "Dragon Hammer",
+  "エラがみ": "Fishious Rend",
+  "ギアソーサー": "Gear Grind",
+  "ハイパードリル": "Hyper Drill",
+  "メタルクロー": "Metal Claw",
+  "めざめるダンス": "Revelation Dance",
+  "トリプルダイブ": "Triple Dive"
+ },
+ "abilities": {
+  "てきおうりょく": "Adaptability",
+  "スカイスキン": "Aerilate",
+  "ゆうばく": "Aftermath",
+  "アナライズ": "Analytic",
+  "いかりのつぼ": "Anger Point",
+  "きけんよち": "Anticipation",
+  "テイルアーマー": "Armor Tail",
+  "アロマベール": "Aroma Veil",
+  "カブトアーマー": "Battle Armor",
+  "ぎゃくじょう": "Berserk",
+  "はとむね": "Big Pecks",
+  "もうか": "Blaze",
+  "ぼうだん": "Bulletproof",
+  "ほおぶくろ": "Cheek Pouch",
+  "ようりょくそ": "Chlorophyll",
+  "クリアボディ": "Clear Body",
+  "ノーてんき": "Cloud Nine",
+  "かちき": "Competitive",
+  "ふくがん": "Compound Eyes",
+  "あまのじゃく": "Contrary",
+  "ふしょく": "Corrosion",
+  "はんすう": "Cud Chew",
+  "きみょうなくすり": "Curious Medicine",
+  "のろわれボディ": "Cursed Body",
+  "メロメロボディ": "Cute Charm",
+  "しめりけ": "Damp",
+  "まけんき": "Defiant",
+  "ばけのかわ": "Disguise",
+  "ドラゴンスキン": "Dragonize",
+  "あめふらし": "Drizzle",
+  "ひでり": "Drought",
+  "かんそうはだ": "Dry Skin",
+  "はやおき": "Early Bird",
+  "どしょく": "Earth Eater",
+  "ほうし": "Effect Spore",
+  "エレキメイカー": "Electric Surge",
+  "でんきにかえる": "Electromorphosis",
+  "ききかいひ": "Emergency Exit",
+  "フェアリーオーラ": "Fairy Aura",
+  "フィルター": "Filter",
+  "ほのおのからだ": "Flame Body",
+  "もらいび": "Flash Fire",
+  "フラワーベール": "Flower Veil",
+  "もふもふ": "Fluffy",
+  "てんきや": "Forecast",
+  "よちむ": "Forewarn",
+  "フレンドガード": "Friend Guard",
+  "おみとおし": "Frisk",
+  "ファーコート": "Fur Coat",
+  "はやてのつばさ": "Gale Wings",
+  "くいしんぼう": "Gluttony",
+  "おうごんのからだ": "Good as Gold",
+  "ぬめぬめ": "Gooey",
+  "くさのけがわ": "Grass Pelt",
+  "グラスメイカー": "Grassy Surge",
+  "ばんけん": "Guard Dog",
+  "こんじょう": "Guts",
+  "しゅうかく": "Harvest",
+  "いやしのこころ": "Healer",
+  "たいねつ": "Heatproof",
+  "ヘヴィメタル": "Heavy Metal",
+  "おもてなし": "Hospitality",
+  "ちからもち": "Huge Power",
+  "はらぺこスイッチ": "Hunger Switch",
+  "はりきり": "Hustle",
+  "うるおいボディ": "Hydration",
+  "かいりきバサミ": "Hyper Cutter",
+  "アイスボディ": "Ice Body",
+  "はっこう": "Illuminate",
+  "イリュージョン": "Illusion",
+  "めんえき": "Immunity",
+  "かわりもの": "Imposter",
+  "すりぬけ": "Infiltrator",
+  "とびだすなかみ": "Innards Out",
+  "せいしんりょく": "Inner Focus",
+  "ふみん": "Insomnia",
+  "いかく": "Intimidate",
+  "てつのこぶし": "Iron Fist",
+  "せいぎのこころ": "Justified",
+  "するどいめ": "Keen Eye",
+  "ぶきよう": "Klutz",
+  "リーフガード": "Leaf Guard",
+  "ふゆう": "Levitate",
+  "リベロ": "Libero",
+  "ライトメタル": "Light Metal",
+  "ひらいしん": "Lightning Rod",
+  "じゅうなん": "Limber",
+  "ヘドロえき": "Liquid Ooze",
+  "うるおいボイス": "Liquid Voice",
+  "えんかく": "Long Reach",
+  "マジックミラー": "Magic Bounce",
+  "マジックガード": "Magic Guard",
+  "マジシャン": "Magician",
+  "マグマのよろい": "Magma Armor",
+  "ふしぎなうろこ": "Marvel Scale",
+  "メガランチャー": "Mega Launcher",
+  "メガソーラー": "Mega Sol",
+  "ひとでなし": "Merciless",
+  "ぎたい": "Mimicry",
+  "マイナス": "Minus",
+  "ミラーアーマー": "Mirror Armor",
+  "かたやぶり": "Mold Breaker",
+  "ムラっけ": "Moody",
+  "でんきエンジン": "Motor Drive",
+  "じしんかじょう": "Moxie",
+  "マルチスケイル": "Multiscale",
+  "ミイラ": "Mummy",
+  "しぜんかいふく": "Natural Cure",
+  "ノーガード": "No Guard",
+  "どんかん": "Oblivious",
+  "びんじょう": "Opportunist",
+  "ぼうじん": "Overcoat",
+  "しんりょく": "Overgrow",
+  "マイペース": "Own Tempo",
+  "おやこあい": "Parental Bond",
+  "わるいてぐせ": "Pickpocket",
+  "ものひろい": "Pickup",
+  "かんつうドリル": "Piercing Drill",
+  "フェアリースキン": "Pixilate",
+  "プラス": "Plus",
+  "ポイズンヒール": "Poison Heal",
+  "どくのトゲ": "Poison Point",
+  "どくしゅ": "Poison Touch",
+  "いたずらごころ": "Prankster",
+  "プレッシャー": "Pressure",
+  "へんげんじざい": "Protean",
+  "サイコメイカー": "Psychic Surge",
+  "パンクロック": "Punk Rock",
+  "ヨガパワー": "Pure Power",
+  "きよめのしお": "Purifying Salt",
+  "じょおうのいげん": "Queenly Majesty",
+  "クイックドロウ": "Quick Draw",
+  "はやあし": "Quick Feet",
+  "あめうけざら": "Rain Dish",
+  "びびり": "Rattled",
+  "レシーバー": "Receiver",
+  "すてみ": "Reckless",
+  "フリーズスキン": "Refrigerate",
+  "さいせいりょく": "Regenerator",
+  "じゅくせい": "Ripen",
+  "とうそうしん": "Rivalry",
+  "いしあたま": "Rock Head",
+  "さめはだ": "Rough Skin",
+  "にげあし": "Run Away",
+  "すなのちから": "Sand Force",
+  "すなかき": "Sand Rush",
+  "すなはき": "Sand Spit",
+  "すなおこし": "Sand Stream",
+  "すながくれ": "Sand Veil",
+  "そうしょく": "Sap Sipper",
+  "きもったま": "Scrappy",
+  "バリアフリー": "Screen Cleaner",
+  "こぼれダネ": "Seed Sower",
+  "かげふみ": "Shadow Tag",
+  "きれあじ": "Sharpness",
+  "だっぴ": "Shed Skin",
+  "ちからずく": "Sheer Force",
+  "シェルアーマー": "Shell Armor",
+  "りんぷん": "Shield Dust",
+  "スキルリンク": "Skill Link",
+  "ゆきかき": "Slush Rush",
+  "スナイパー": "Sniper",
+  "ゆきがくれ": "Snow Cloak",
+  "ゆきふらし": "Snow Warning",
+  "サンパワー": "Solar Power",
+  "ハードロック": "Solid Rock",
+  "ぼうおん": "Soundproof",
+  "かそく": "Speed Boost",
+  "とびだすハバネロ": "Spicy Spray",
+  "はりこみ": "Stakeout",
+  "あとだし": "Stall",
+  "すじがねいり": "Stalwart",
+  "じきゅうりょく": "Stamina",
+  "バトルスイッチ": "Stance Change",
+  "せいでんき": "Static",
+  "ふくつのこころ": "Steadfast",
+  "はがねのせいしん": "Steely Spirit",
+  "あくしゅう": "Stench",
+  "ねんちゃく": "Sticky Hold",
+  "がんじょうあご": "Strong Jaw",
+  "がんじょう": "Sturdy",
+  "きゅうばん": "Suction Cups",
+  "きょううん": "Super Luck",
+  "かんろなミツ": "Supersweet Syrup",
+  "そうだいしょう": "Supreme Overlord",
+  "サーフテール": "Surge Surfer",
+  "むしのしらせ": "Swarm",
+  "スイートベール": "Sweet Veil",
+  "すいすい": "Swift Swim",
+  "きょうせい": "Symbiosis",
+  "シンクロ": "Synchronize",
+  "ちどりあし": "Tangled Feet",
+  "テクニシャン": "Technician",
+  "テレパシー": "Telepathy",
+  "ねつこうかん": "Thermal Exchange",
+  "あついしぼう": "Thick Fat",
+  "げきりゅう": "Torrent",
+  "かたいツメ": "Tough Claws",
+  "どくげしょう": "Toxic Debris",
+  "トレース": "Trace",
+  "てんねん": "Unaware",
+  "かるわざ": "Unburden",
+  "きんちょうかん": "Unnerve",
+  "ふかしのこぶし": "Unseen Fist",
+  "やるき": "Vital Spirit",
+  "ちくでん": "Volt Absorb",
+  "さまようたましい": "Wandering Spirit",
+  "ちょすい": "Water Absorb",
+  "すいほう": "Water Bubble",
+  "くだけるよろい": "Weak Armor",
+  "しろいけむり": "White Smoke",
+  "マイティチェンジ": "Zero to Hero"
+ },
+ "items": {
+  "ユキノオナイト": "Abomasite",
+  "アブソルナイト": "Absolite",
+  "アブソルナイトZ": "Absolite Z",
+  "プテラナイト": "Aerodactylite",
+  "ボスゴドラナイト": "Aggronite",
+  "ふうせん": "Air Balloon",
+  "フーディナイト": "Alakazite",
+  "チルタリスナイト": "Altarianite",
+  "デンリュウナイト": "Ampharosite",
+  "ナナシのみ": "Aspear Berry",
+  "タブンネナイト": "Audinite",
+  "リリバのみ": "Babiri Berry",
+  "ジュペッタナイト": "Banettite",
+  "ガメノデスナイト": "Barbaracite",
+  "セグレイブナイト": "Baxcalibrite",
+  "スピアナイト": "Beedrillite",
+  "おおきなねっこ": "Big Root",
+  "しめつけバンド": "Binding Band",
+  "くろおび": "Black Belt",
+  "くろいメガネ": "Black Glasses",
+  "カメックスナイト": "Blastoisinite",
+  "バシャーモナイト": "Blazikenite",
+  "ひかりのこな": "Bright Powder",
+  "バクーダナイト": "Cameruptite",
+  "シャンデラナイト": "Chandelurite",
+  "もくたん": "Charcoal",
+  "リザードナイトX": "Charizardite X",
+  "リザードナイトY": "Charizardite Y",
+  "ヨロギのみ": "Charti Berry",
+  "クラボのみ": "Cheri Berry",
+  "ブリガロンナイト": "Chesnaughtite",
+  "カゴのみ": "Chesto Berry",
+  "ホズのみ": "Chilan Berry",
+  "チリーンナイト": "Chimechite",
+  "こだわりスカーフ": "Choice Scarf",
+  "ヨプのみ": "Chople Berry",
+  "ピクシナイト": "Clefablite",
+  "バコウのみ": "Coba Berry",
+  "ナモのみ": "Colbur Berry",
+  "ケケンカニナイト": "Crabominite",
+  "しめったいわ": "Damp Rock",
+  "マフォクシナイト": "Delphoxite",
+  "ドラミドロナイト": "Dragalgite",
+  "りゅうのキバ": "Dragon Fang",
+  "カイリュナイト": "Dragoninite",
+  "ジジーロンナイト": "Drampanite",
+  "シビルドンナイト": "Eelektrossite",
+  "だっしゅつボタン": "Eject Button",
+  "エレキシード": "Electric Seed",
+  "エンブオナイト": "Emboarite",
+  "ドリュウズナイト": "Excadrite",
+  "たつじんのおび": "Expert Belt",
+  "ようせいのハネ": "Fairy Feather",
+  "タイレーツナイト": "Falinksite",
+  "オーダイルナイト": "Feraligite",
+  "フラエッテナイト": "Floettite",
+  "きあいのハチマキ": "Focus Band",
+  "きあいのタスキ": "Focus Sash",
+  "ユキメノコナイト": "Froslassite",
+  "エルレイドナイト": "Galladite",
+  "ガブリアスナイト": "Garchompite",
+  "ガブリアスナイトZ": "Garchompite Z",
+  "サーナイトナイト": "Gardevoirite",
+  "ゲンガナイト": "Gengarite",
+  "オニゴーリナイト": "Glalitite",
+  "キラフロルナイト": "Glimmoranite",
+  "グソクムシャナイト": "Golisopite",
+  "ゴルーグナイト": "Golurkite",
+  "グラスシード": "Grassy Seed",
+  "ゲッコウガナイト": "Greninjite",
+  "ギャラドスナイト": "Gyaradosite",
+  "ハバンのみ": "Haban Berry",
+  "かたいいし": "Hard Stone",
+  "ルチャブルナイト": "Hawluchanite",
+  "あついいわ": "Heat Rock",
+  "ヘラクロスナイト": "Heracronite",
+  "ヘルガナイト": "Houndoominite",
+  "つめたいいわ": "Icy Rock",
+  "くろいてっきゅう": "Iron Ball",
+  "ガルーラナイト": "Kangaskhanite",
+  "カシブのみ": "Kasib Berry",
+  "ビアーのみ": "Kebia Berry",
+  "おうじゃのしるし": "King's Rock",
+  "ながねぎ": "Leek",
+  "たべのこし": "Leftovers",
+  "ヒメリのみ": "Leppa Berry",
+  "いのちのたま": "Life Orb",
+  "でんきだま": "Light Ball",
+  "ひかりのねんど": "Light Clay",
+  "ミミロップナイト": "Lopunnite",
+  "ルカリオナイト": "Lucarionite",
+  "ルカリオナイトZ": "Lucarionite Z",
+  "ラムのみ": "Lum Berry",
+  "じしゃく": "Magnet",
+  "カラマネロナイト": "Malamarite",
+  "ライボルトナイト": "Manectite",
+  "クチートナイト": "Mawilite",
+  "チャーレムナイト": "Medichamite",
+  "メガニウムナイト": "Meganiumite",
+  "メンタルハーブ": "Mental Herb",
+  "ニャオニクスナイト": "Meowsticite",
+  "メタグロスナイト": "Metagrossite",
+  "メタルコート": "Metal Coat",
+  "メトロノーム": "Metronome",
+  "きせきのタネ": "Miracle Seed",
+  "ミストシード": "Misty Seed",
+  "ちからのハチマキ": "Muscle Band",
+  "しんぴのしずく": "Mystic Water",
+  "とけないこおり": "Never-Melt Ice",
+  "ノーマルジュエル": "Normal Gem",
+  "オッカのみ": "Occa Berry",
+  "オレンのみ": "Oran Berry",
+  "イトケのみ": "Passho Berry",
+  "ウタンのみ": "Payapa Berry",
+  "モモンのみ": "Pecha Berry",
+  "キーのみ": "Persim Berry",
+  "ピジョットナイト": "Pidgeotite",
+  "カイロスナイト": "Pinsirite",
+  "どくバリ": "Poison Barb",
+  "サイコシード": "Psychic Seed",
+  "カエンジシナイト": "Pyroarite",
+  "せんせいのツメ": "Quick Claw",
+  "ライチュウナイトX": "Raichunite X",
+  "ライチュウナイトY": "Raichunite Y",
+  "チーゴのみ": "Rawst Berry",
+  "レッドカード": "Red Card",
+  "リンドのみ": "Rindo Berry",
+  "ゴツゴツメット": "Rocky Helmet",
+  "ロゼルのみ": "Roseli Berry",
+  "ヤミラミナイト": "Sablenite",
+  "ボーマンダナイト": "Salamencite",
+  "ジュカインナイト": "Sceptilite",
+  "ハッサムナイト": "Scizorite",
+  "ペンドラナイト": "Scolipite",
+  "ピントレンズ": "Scope Lens",
+  "スコヴィランナイト": "Scovillainite",
+  "ズルズキンナイト": "Scraftinite",
+  "するどいくちばし": "Sharp Beak",
+  "サメハダナイト": "Sharpedonite",
+  "きれいなぬけがら": "Shed Shell",
+  "かいがらのすず": "Shell Bell",
+  "シュカのみ": "Shuca Berry",
+  "シルクのスカーフ": "Silk Scarf",
+  "ぎんのこな": "Silver Powder",
+  "オボンのみ": "Sitrus Berry",
+  "エアームドナイト": "Skarmorite",
+  "ヤドランナイト": "Slowbronite",
+  "さらさらいわ": "Smooth Rock",
+  "やわらかいすな": "Soft Sand",
+  "のろいのおふだ": "Spell Tag",
+  "ムクホークナイト": "Staraptite",
+  "スターミナイト": "Starminite",
+  "ハガネールナイト": "Steelixite",
+  "ラグラージナイト": "Swampertite",
+  "タンガのみ": "Tanga Berry",
+  "グランドコート": "Terrain Extender",
+  "まがったスプーン": "Twisted Spoon",
+  "バンギラスナイト": "Tyranitarite",
+  "フシギバナイト": "Venusaurite",
+  "ウツボットナイト": "Victreebelite",
+  "ソクノのみ": "Wacan Berry",
+  "しろいハーブ": "White Herb",
+  "こうかくレンズ": "Wide Lens",
+  "ものしりメガネ": "Wise Glasses",
+  "ヤチェのみ": "Yache Berry",
+  "フォーカスレンズ": "Zoom Lens"
+ },
+ "missing": {
+  "species": [],
+  "moves": [],
+  "abilities": [
+   "Aura Guard",
+   "Eelevate",
+   "Fire Mane"
+  ],
+  "items": []
+ },
+ "generated": [
+  "アブソルナイトZ=Absolite Z",
+  "ガメノデスナイト=Barbaracite",
+  "セグレイブナイト=Baxcalibrite",
+  "シャンデラナイト=Chandelurite",
+  "ブリガロンナイト=Chesnaughtite",
+  "チリーンナイト=Chimechite",
+  "ピクシナイト=Clefablite",
+  "ケケンカニナイト=Crabominite",
+  "マフォクシナイト=Delphoxite",
+  "ドラミドロナイト=Dragalgite",
+  "カイリュナイト=Dragoninite",
+  "ジジーロンナイト=Drampanite",
+  "シビルドンナイト=Eelektrossite",
+  "エンブオナイト=Emboarite",
+  "ドリュウズナイト=Excadrite",
+  "タイレーツナイト=Falinksite",
+  "オーダイルナイト=Feraligite",
+  "フラエッテナイト=Floettite",
+  "ユキメノコナイト=Froslassite",
+  "ガブリアスナイトZ=Garchompite Z",
+  "キラフロルナイト=Glimmoranite",
+  "グソクムシャナイト=Golisopite",
+  "ゴルーグナイト=Golurkite",
+  "ゲッコウガナイト=Greninjite",
+  "ルチャブルナイト=Hawluchanite",
+  "ルカリオナイトZ=Lucarionite Z",
+  "カラマネロナイト=Malamarite",
+  "メガニウムナイト=Meganiumite",
+  "ニャオニクスナイト=Meowsticite",
+  "カエンジシナイト=Pyroarite",
+  "ライチュウナイトX=Raichunite X",
+  "ライチュウナイトY=Raichunite Y",
+  "ペンドラナイト=Scolipite",
+  "スコヴィランナイト=Scovillainite",
+  "ズルズキンナイト=Scraftinite",
+  "エアームドナイト=Skarmorite",
+  "ムクホークナイト=Staraptite",
+  "スターミナイト=Starminite",
+  "ウツボットナイト=Victreebelite"
+ ]
+}

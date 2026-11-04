@@ -1,0 +1,20 @@
+name: 計算エンジンのテスト
+
+on:
+  push:
+    branches: [main]
+    paths: ['Engine/**', 'Data/**', '.github/workflows/engine-test.yml']
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: テストを実行
+        run: node --test Engine/test/engine.test.js
+      - name: 実数値の式を確認
+        run: python3 Tools/check_sp_formula.py
