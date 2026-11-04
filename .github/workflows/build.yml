@@ -1,0 +1,50 @@
+name: iPhoneアプリをビルド
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: xcode-27
+    steps:
+      - name: コードを取得
+        uses: actions/checkout@v4
+
+      - name: XcodeGen を入れる
+        run: brew install xcodegen
+
+      - name: Xcode プロジェクトを生成
+        run: xcodegen generate
+
+      - name: ビルド(署名なし)
+        run: |
+          xcodebuild \
+            -project PokeChanAssist.xcodeproj \
+            -target PokeChanAssist \
+            -configuration Release \
+            -sdk iphoneos \
+            SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: ipa にまとめる
+        run: |
+          APP="build/Release-iphoneos/PokeChanAssist.app"
+          ls -la "$APP" "$APP/PlugIns"
+          # 書き込みツールが引き継げるよう、共有領域の設定を仮の署名で埋め込む
+          codesign --force --sign - --entitlements Broadcast/Broadcast.entitlements "$APP/PlugIns/Broadcast.appex"
+          codesign --force --sign - --entitlements App/App.entitlements "$APP"
+          mkdir -p Payload
+          cp -R "$APP" Payload/
+          zip -qry PokeChanAssist.ipa Payload
+
+      - name: ipa を保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: PokeChanAssist-ipa
+          path: PokeChanAssist.ipa
+          retention-days: 14
