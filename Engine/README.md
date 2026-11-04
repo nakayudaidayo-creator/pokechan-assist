@@ -38,3 +38,20 @@ node --test Engine/test/engine.test.js
 ```
 
 チーム6の実数値36項目、おはかまいりの威力変化、はたきおとすの1.5倍、もふもふ・マルチスケイル・いかく・やけど・フェアリースキン・ゆき・すなあらし・あめ・はれ・急所・リフレクター・フォルム違い、実戦のダメージ記録を確認しています。
+
+## テロップ解析とバトル状態
+
+- `src/telop.js`:画面から読み取った文字列(テロップ・特性/持ち物の帯・HP表示・ログ)を出来事に変換します
+- `src/battle.js`:出来事を順に受け取り、天候・ステルスロック・両側のポケモン(HP、ランク、状態異常、判明した特性・持ち物・技、メガシンカ)・倒れた数を管理し、技ごとのダメージを記録します
+
+```js
+const {Battle} = require('./src/battle.js');
+const b = new Battle({party: require('../Data/party.json').members, opponentTeam: ['ボーマンダ']});
+b.feed({kind: 'telop', text: 'イダイトウの ウェーブタックル!'});
+b.feed({kind: 'hp', side: 'opp', name: 'ボーマンダ', percent: 35});
+const input = b.toCalcInput(b.damageLog[0]);   // そのまま engine.damage(input) に渡せる
+```
+
+反動・やけど・砂・ステルスロック・回復によるHP変化は、技のダメージに数えません。ログ画面の「HP 100% → 65%」は答え合わせに使えます。
+
+テストはもらったスクショの対戦3つを書き起こしたものです(`test/battle.test.js`)。
