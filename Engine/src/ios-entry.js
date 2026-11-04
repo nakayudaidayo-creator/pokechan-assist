@@ -4,6 +4,7 @@
 import engine from './engine.js';
 import battleModule from './battle.js';
 import calc from '../vendor/smogon-calc.js';
+import pip from './pip.js';
 
 const {Battle} = battleModule;
 const MOVE_DATA = calc.Generations.get(0).moves;
@@ -12,7 +13,8 @@ const MOVE_DATA = calc.Generations.get(0).moves;
 function category(moveJa) {
   const en = engine.names.moves[engine.normalize(moveJa)] || moveJa;
   const m = MOVE_DATA.get(String(en).toLowerCase().replace(/[^a-z0-9]/g, ''));
-  return m ? m.category : undefined; // 'Physical' | 'Special' | 'Status'
+  if (!m) return undefined;
+  return m.category || (m.basePower ? undefined : 'Status'); // 'Physical' | 'Special' | 'Status'
 }
 
 // 相手の調整がわからないときに比べる2つの型
@@ -57,7 +59,13 @@ const api = {
 // 対戦中の状態は1つだけ持つ
 let battle = null;
 api.battleStart = input => { battle = new Battle(input); return battle.summary(); };
-api.battleFeed = input => { if (!battle) battle = new Battle({}); battle.feed(input); return battle.summary(); };
+api.battleFeed = input => {
+  if (!battle) battle = new Battle({});
+  for (const i of (Array.isArray(input) ? input : [input])) battle.feed(i);
+  return battle.summary();
+};
+/** 小窓(案A)に出す内容 */
+api.pipView = () => (battle ? pip.buildView(battle) : {title: 'ポケチャン補助', waiting: true, message: '対戦の開始を待っています'});
 
 globalThis.pokechanCall = function (name, json) {
   try {

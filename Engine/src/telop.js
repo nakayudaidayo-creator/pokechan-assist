@@ -127,6 +127,11 @@ function parseTelop(raw) {
     }
   }
 
+  // 持ち物を使った:「相手の ガブリアスは オボンのみで 体力を 回復した!」「Xは きあいのタスキで もちこたえた!」
+  if ((m = rest.match(/^(.+?)は(.+?)で(体力を回復した|もちこたえた|持ちこたえた)/))) {
+    return [{type: 'itemRevealed', side, species: m[1], item: m[2], removed: true}];
+  }
+
   // はたきおとす:「XはYの〇〇をはたきおとした!」「相手のXの〇〇を はたきおとした!」
   if ((m = text.match(/(相手の)?([^の]+)の(.+?)をはたきおとした/))) {
     return [{type: 'itemRevealed', side: m[1] ? 'opp' : 'me', species: m[2], item: m[3], removed: true}];

@@ -5,6 +5,7 @@
 
 const telop = require('./telop.js');
 const engine = require('./engine.js');
+const {moveInfo} = require('./infer.js');
 
 const STAT_JA = {atk: 'こうげき', def: 'ぼうぎょ', spa: 'とくこう', spd: 'とくぼう', spe: 'すばやさ'};
 
@@ -14,7 +15,7 @@ function emptyMon(species) {
     hpPercent: 100, hpCur: undefined, hpMax: undefined,
     boosts: {atk: 0, def: 0, spa: 0, spd: 0, spe: 0, acc: 0, eva: 0},
     status: undefined, ability: undefined, item: undefined, itemRemoved: false,
-    moves: [], fainted: false,
+    moves: [], movesThisSwitch: [], fainted: false,
   };
 }
 
@@ -33,6 +34,8 @@ class Battle {
     this.damageLog = [];
     this.current = null; // 今の行動(技 → ダメージ → 急所/相性の順に組み立てる)
     this.unknown = [];
+    this.speedLog = [];   // 同じ優先度の技どうしで、どちらが先に動いたか
+    this.pair = [];       // 今のターンに動いた側(先に動いた順)
   }
 
   // ---- 入力 ------------------------------------------------------------
@@ -83,7 +86,8 @@ class Battle {
       for (const k of Object.keys(old.boosts)) old.boosts[k] = 0;
     }
     s.active = species;
-    this.mon(side, species);
+    this.mon(side, species).movesThisSwitch = [];
+    this.pair = [];
   }
 
   closeAction() {
@@ -95,6 +99,7 @@ class Battle {
       case 'turn':
         this.turn = ev.turn;
         this.closeAction();
+        this.pair = [];
         break;
 
       case 'switchIn': {
@@ -144,6 +149,8 @@ class Battle {
         this.closeAction();
         const attacker = this.mon(ev.side, ev.species);
         if (!attacker.moves.includes(ev.move)) attacker.moves.push(ev.move);
+        attacker.movesThisSwitch.push(ev.move);
+        this.recordOrder(ev.side, ev.move);
         this.sides[ev.side].active = ev.species;
         const defSide = ev.side === 'me' ? 'opp' : 'me';
         const defender = this.mon(defSide);
@@ -196,6 +203,17 @@ class Battle {
 
       default:
         this.unknown.push(ev);
+    }
+  }
+
+  /** 両方が同じ優先度の技を出したターンの、動いた順を記録する */
+  recordOrder(side, move) {
+    const prio = moveInfo(move).priority;
+    if (this.pair.length >= 2 || this.pair.some(p => p.side === side)) this.pair = [];
+    this.pair.push({side, prio});
+    if (this.pair.length === 2 && this.pair[0].prio === this.pair[1].prio) {
+      this.speedLog.push({turn: this.turn, first: this.pair[0].side,
+        me: this.sides.me.active, opp: this.sides.opp.active});
     }
   }
 
