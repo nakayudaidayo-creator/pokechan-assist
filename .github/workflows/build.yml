@@ -4,10 +4,14 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      runner:
+        description: 'ビルドに使うMac(混んでいるときは macos-26 などに変える)'
+        default: 'xcode-27'
 
 jobs:
   build:
-    runs-on: xcode-27
+    runs-on: ${{ inputs.runner || 'xcode-27' }}
     steps:
       - name: コードを取得
         uses: actions/checkout@v4
