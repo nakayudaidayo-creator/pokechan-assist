@@ -39,12 +39,24 @@ final class PiPController: NSObject, ObservableObject {
         let controller = AVPictureInPictureController(contentSource: source)
         controller.delegate = self
         controller.canStartPictureInPictureAutomaticallyFromInline = true
+        hideControls(controller)
         pipController = controller
 
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             self?.renderFrame()
         }
         renderFrame()
+    }
+
+    /// 小窓の再生・停止と10秒戻し・送りのボタンを出さない。
+    /// 戻し・送りは公開の設定で消せる。再生・停止は公開の設定がないので、
+    /// iOS が内部で持っている表示の切り替え(controlsStyle)を、ある場合だけ使う(自分用アプリのため)
+    private func hideControls(_ controller: AVPictureInPictureController) {
+        controller.requiresLinearPlayback = true
+        let key = "controlsStyle"
+        if controller.responds(to: NSSelectorFromString("setControlsStyle:")) {
+            controller.setValue(1, forKey: key)
+        }
     }
 
     func start() {
