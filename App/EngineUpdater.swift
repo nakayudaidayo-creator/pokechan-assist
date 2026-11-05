@@ -35,15 +35,24 @@ final class EngineUpdater: ObservableObject {
         case failed(String)
     }
 
+    /// GitHub の配信は数分間キャッシュされるので、毎回違う問い合わせにして端末とGitHub両方のキャッシュを避ける
+    private func fresh(_ name: String) -> URLRequest {
+        var c = URLComponents(url: base.appendingPathComponent(name), resolvingAgainstBaseURL: false)!
+        c.queryItems = [URLQueryItem(name: "t", value: String(Int(Date().timeIntervalSince1970)))]
+        var r = URLRequest(url: c.url!)
+        r.cachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        return r
+    }
+
     private func fetchNewer() async -> Result {
         let current = EngineBridge.shared.version
         do {
-            let (vdata, vres) = try await URLSession.shared.data(from: base.appendingPathComponent("engine-version.json"))
+            let (vdata, vres) = try await URLSession.shared.data(for: fresh("engine-version.json"))
             guard (vres as? HTTPURLResponse)?.statusCode == 200 else { return .failed("版の情報を取得できませんでした") }
             let remote = try JSONDecoder().decode(EngineSource.VersionFile.self, from: vdata)
             guard remote.version > current else { return .upToDate }
 
-            let (code, cres) = try await URLSession.shared.data(from: base.appendingPathComponent("pokechan-engine.js"))
+            let (code, cres) = try await URLSession.shared.data(for: fresh("pokechan-engine.js"))
             guard (cres as? HTTPURLResponse)?.statusCode == 200 else { return .failed("計算エンジンを取得できませんでした") }
             let sha = SHA256.hash(data: code).map { String(format: "%02x", $0) }.joined()
             guard sha == remote.sha256 else { return .failed("取得したファイルが壊れていました(取得中に更新された可能性があります)") }
