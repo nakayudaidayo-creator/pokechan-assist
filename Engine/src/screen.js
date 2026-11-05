@@ -70,6 +70,33 @@ function editDistance(a, b) {
   return d[a.length][b.length];
 }
 
+/**
+ * 選出画面の左側から、自分が選んだポケモンを選んだ順に読む。
+ * 選んだポケモンの欄の左に、大きな数字(1・2・3)が出る
+ */
+function readSelection(obs) {
+  const names = [];
+  for (const o of obs) {
+    if (o.x > 0.33) continue;
+    const n = findSpecies([o.text]);
+    if (n) names.push({name: n, cy: o.y + o.h / 2});
+  }
+  const picks = [];
+  for (const o of obs) {
+    const t = norm(o.text);
+    if (o.x > 0.08 || !/^[123]$/.test(t)) continue;
+    const cy = o.y + o.h / 2;
+    let best = null;
+    for (const n of names) {
+      const dy = Math.abs(n.cy - cy);
+      if (dy < 0.06 && (!best || dy < best.dy)) best = {name: n.name, dy};
+    }
+    if (best) picks.push({order: +t, name: best.name});
+  }
+  picks.sort((a, b) => a.order - b.order);
+  return [...new Set(picks.map(p => p.name))];
+}
+
 class ScreenReader {
   constructor() {
     this.reset();
@@ -100,7 +127,8 @@ class ScreenReader {
       this.mode = 'select';
       this.reset();
       this.mode = 'select';
-      return {mode: 'select', inputs, newBattle, debug: {}};
+      const selection = readSelection(obs);
+      return {mode: 'select', inputs, newBattle, selection, debug: {selection}};
     }
 
     // ログ画面:「ターン N」が見出しにある
@@ -183,4 +211,4 @@ class ScreenReader {
   }
 }
 
-module.exports = {ScreenReader, LAYOUT, findSpecies, joinLines};
+module.exports = {ScreenReader, LAYOUT, findSpecies, joinLines, readSelection};

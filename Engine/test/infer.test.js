@@ -82,8 +82,20 @@ test('控え:交代した相手は小窓の下にまとめて出し、ページ�
 
   const benchPage = buildView(b, {page: 1});
   assert.strictEqual(benchPage.title, 'イダイトウ ⇄ ガブリアス(控え)');
-  assert.strictEqual(benchPage.pageLabel, '控え 1/1');
+  assert.strictEqual(benchPage.pageLabel, '相手の控え 1/1');
   assert.ok(benchPage.theirs[0].used && benchPage.theirs[0].move === 'じしん');
   assert.strictEqual(benchPage.bench[0].species, 'ボーマンダ', '控えのページでは場の相手が下に出る');
   assert.strictEqual(buildView(b, {page: 2}).title, front.title, '最後のページの次は対面に戻る');
+});
+
+test('自分の交代先:選出した3匹のうち場にいないポケモンで、今の相手との対面を出す', () => {
+  const b = start('イダイトウ', 'ガブリアス');
+  b.mySelection = ['カバルドン', 'イダイトウ', 'ミミッキュ'];
+  const v = buildView(b, {myPage: 1});
+  assert.strictEqual(v.title, 'カバルドン(交代先) ⇄ ガブリアス');
+  assert.strictEqual(v.pageLabel, '交代先 1/2');
+  assert.strictEqual(v.myPageCount, 3);
+  assert.ok(v.theirs.length >= 2, '相手の技で交代先がどれだけ受けるかが出る');
+  assert.strictEqual(buildView(b, {myPage: 2}).title, 'ミミッキュ(交代先) ⇄ ガブリアス');
+  assert.strictEqual(buildView(b, {myPage: 3}).title, 'イダイトウ ⇄ ガブリアス', '最後の次は場の対面に戻る');
 });

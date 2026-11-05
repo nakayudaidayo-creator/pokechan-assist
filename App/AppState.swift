@@ -32,6 +32,9 @@ final class AppState: ObservableObject {
         pip.imageProvider = { [weak self] in
             self?.image ?? PipRenderer.render(.message("待機中"))
         }
+        pip.onSkipBack = { [weak self] in self?.turnPage(["me": 1]) }
+        pip.onSkipForward = { [weak self] in self?.turnPage(["opp": 1]) }
+        pip.onPlayPause = { [weak self] in self?.turnPage(["reset": true]) }
         pip.setup()
 
         updater.canSwitchNow = { [weak self] in !(self?.battleActive ?? false) }
@@ -72,6 +75,12 @@ final class AppState: ObservableObject {
             lastScreenInputs = Array((lines + lastScreenInputs).prefix(12))
             refresh()
         }
+    }
+
+    /// 小窓のページを切り替える(me: 自分の交代先 / opp: 相手の控え / reset: 場の対面へ)
+    func turnPage(_ input: [String: Any]) {
+        _ = EngineBridge.shared.call("pipPage", input)
+        refresh()
     }
 
     func refresh() {

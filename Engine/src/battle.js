@@ -28,6 +28,7 @@ class Battle {
   constructor(opts = {}) {
     this.party = opts.party || [];
     this.opponentTeam = opts.opponentTeam || [];
+    this.mySelection = opts.mySelection || []; // 選出画面で選んだ自分の3匹(選んだ順)
     this.turn = 0;
     this.field = {weather: null, me: {stealthRock: false, spikes: 0}, opp: {stealthRock: false, spikes: 0}};
     this.sides = {me: {active: null, mons: {}, fainted: 0}, opp: {active: null, mons: {}, fainted: 0}};

@@ -12,6 +12,12 @@ final class PiPController: NSObject, ObservableObject {
     /// 小窓に表示する画像。呼ばれるたびに最新の内容を返す
     var imageProvider: () -> UIImage = { PipRenderer.render(.message("待機中")) }
 
+    /// 小窓のボタンの割り当て
+    /// 10秒戻し(左)= 自分の交代先へ、10秒送り(右)= 相手の控えへ、再生・停止(真ん中)= 場の対面に戻る
+    var onSkipBack: () -> Void = {}
+    var onSkipForward: () -> Void = {}
+    var onPlayPause: () -> Void = {}
+
     private var pipController: AVPictureInPictureController?
     private var timer: Timer?
 
@@ -39,24 +45,12 @@ final class PiPController: NSObject, ObservableObject {
         let controller = AVPictureInPictureController(contentSource: source)
         controller.delegate = self
         controller.canStartPictureInPictureAutomaticallyFromInline = true
-        hideControls(controller)
         pipController = controller
 
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             self?.renderFrame()
         }
         renderFrame()
-    }
-
-    /// 小窓の再生・停止と10秒戻し・送りのボタンを出さない。
-    /// 戻し・送りは公開の設定で消せる。再生・停止は公開の設定がないので、
-    /// iOS が内部で持っている表示の切り替え(controlsStyle)を、ある場合だけ使う(自分用アプリのため)
-    private func hideControls(_ controller: AVPictureInPictureController) {
-        controller.requiresLinearPlayback = true
-        let key = "controlsStyle"
-        if controller.responds(to: NSSelectorFromString("setControlsStyle:")) {
-            controller.setValue(1, forKey: key)
-        }
     }
 
     func start() {
@@ -177,7 +171,13 @@ extension PiPController: AVPictureInPictureControllerDelegate {
 // MARK: - 再生の扱い(常に「再生中・終わりなし」として扱う)
 
 extension PiPController: AVPictureInPictureSampleBufferPlaybackDelegate {
-    func pictureInPictureController(_ controller: AVPictureInPictureController, setPlaying playing: Bool) {}
+    func pictureInPictureController(_ controller: AVPictureInPictureController, setPlaying playing: Bool) {
+        DispatchQueue.main.async {
+            self.onPlayPause()
+            self.renderFrame()
+            controller.invalidatePlaybackState()
+        }
+    }
 
     func pictureInPictureControllerTimeRangeForPlayback(_ controller: AVPictureInPictureController) -> CMTimeRange {
         CMTimeRange(start: .negativeInfinity, duration: .positiveInfinity)
@@ -193,6 +193,11 @@ extension PiPController: AVPictureInPictureSampleBufferPlaybackDelegate {
     func pictureInPictureController(_ controller: AVPictureInPictureController,
                                     skipByInterval skipInterval: CMTime,
                                     completion completionHandler: @escaping () -> Void) {
-        completionHandler()
+        let back = CMTimeGetSeconds(skipInterval) < 0
+        DispatchQueue.main.async {
+            if back { self.onSkipBack() } else { self.onSkipForward() }
+            self.renderFrame()
+            completionHandler()
+        }
     }
 }

@@ -61,6 +61,15 @@ function pages(battle) {
   return active ? [active, ...bench] : [];
 }
 
+/** 自分側のページの並び:0 = 場のポケモン、1以降 = 交代先(選出した3匹のうち、倒れていないもの) */
+function myPages(battle) {
+  const meSide = battle.sides.me;
+  const active = meSide.active;
+  const pool = battle.mySelection && battle.mySelection.length ? battle.mySelection : battle.party.map(p => p.species);
+  const bench = pool.filter(n => n !== active && !(meSide.mons[n] && meSide.mons[n].fainted));
+  return active ? [active, ...bench] : [];
+}
+
 /** 控えの相手の1行まとめ(小窓の下に常に出す) */
 function benchSummary(battle) {
   const oppSide = battle.sides.opp;
@@ -83,20 +92,26 @@ function benchSummary(battle) {
  */
 function buildView(battle, opts = {}) {
   const meSide = battle.sides.me, oppSide = battle.sides.opp;
-  const meMon = meSide.active && meSide.mons[meSide.active];
+  const activeMe = meSide.active && meSide.mons[meSide.active];
   const order = pages(battle);
-  if (!meMon || !order.length) {
-    return {title: 'ポケチャン補助', waiting: true, message: meMon ? '相手のポケモンを読み取り中' : '対戦の開始を待っています'};
+  if (!activeMe || !order.length) {
+    return {title: 'ポケチャン補助', waiting: true, message: activeMe ? '相手のポケモンを読み取り中' : '対戦の開始を待っています'};
   }
   const page = ((opts.page || 0) % order.length + order.length) % order.length;
   const oppMon = oppSide.mons[order[page]];
   const isBench = page > 0;
 
+  // 自分側:0 = 場のポケモン、1以降 = 交代先(まだ出ていなければHP満タン・ランク変化なし)
+  const myOrder = myPages(battle);
+  const myIdx = ((opts.myPage || 0) % myOrder.length + myOrder.length) % myOrder.length;
+  const isMyBench = myIdx > 0;
+  const meMon = meSide.mons[myOrder[myIdx]] || {species: myOrder[myIdx], hpPercent: 100, boosts: {}, itemRemoved: false};
+
   const member = battle.myMember(meMon.species) || {species: meMon.species};
   const myPoke = {
     name: member.species, form: meMon.form, nature: member.nature, sp: member.sp,
     ability: member.ability, item: meMon.itemRemoved ? undefined : member.item,
-    status: meMon.status, hpPercent: meMon.hpPercent, boosts: boostsJa(meMon.boosts),
+    status: meMon.status, hpPercent: meMon.hpPercent, boosts: isMyBench ? {} : boostsJa(meMon.boosts),
   };
 
   const {candidates, best, oppPoke} = analyze(battle, oppMon);
@@ -131,9 +146,10 @@ function buildView(battle, opts = {}) {
   const assumedItem = oppMon.itemRemoved ? null : (oppMon.item || best.set.item);
   const bench = benchSummary(battle);
   return {
-    title: `${meMon.species} ⇄ ${oppMon.species}${isBench ? '(控え)' : ''}`,
-    page, pageCount: order.length,
-    pageLabel: isBench ? `控え ${page}/${order.length - 1}` : (order.length > 1 ? '対面' : ''),
+    title: `${meMon.species}${isMyBench ? '(交代先)' : ''} ⇄ ${oppMon.species}${isBench ? '(控え)' : ''}`,
+    page, pageCount: order.length, myPage: myIdx, myPageCount: myOrder.length,
+    pageLabel: [isMyBench ? `交代先 ${myIdx}/${myOrder.length - 1}` : '', isBench ? `相手の控え ${page}/${order.length - 1}` : '']
+      .filter(Boolean).join('・') || '対面',
     oppHpPercent: oppMon.hpPercent,
     known: {
       ability: oppMon.ability ? {value: oppMon.ability, sure: true} : (best.set.ability ? {value: best.set.ability, sure: false} : null),
@@ -150,4 +166,4 @@ function buildView(battle, opts = {}) {
   };
 }
 
-module.exports = {buildView, pages};
+module.exports = {buildView, pages, myPages};

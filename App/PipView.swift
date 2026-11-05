@@ -14,6 +14,14 @@ struct PipViewModel: Decodable {
         var opp: Int
         var mySpeedNote: String?
     }
+    struct BenchItem: Decodable {
+        var species: String
+        var hpPercent: Double?
+        var fainted: Bool?
+        var active: Bool?
+        var moves: [String]?
+        var setName: String?
+    }
     struct Row: Decodable {
         var move: String
         var min: Double
@@ -23,6 +31,9 @@ struct PipViewModel: Decodable {
     }
 
     var title: String
+    var pageLabel: String?
+    var bench: [BenchItem]?
+    var remaining: [String]?
     var waiting: Bool?
     var message: String?
     var oppHpPercent: Double?
@@ -36,11 +47,17 @@ struct PipViewModel: Decodable {
     static func message(_ text: String) -> PipViewModel {
         PipViewModel(title: "ポケチャン補助", waiting: true, message: text)
     }
+
+    init(title: String, waiting: Bool? = nil, message: String? = nil) {
+        self.title = title
+        self.waiting = waiting
+        self.message = message
+    }
 }
 
 /// 案Aのレイアウトで小窓の画像を描く
 enum PipRenderer {
-    static let size = CGSize(width: 500, height: 420)
+    static let size = CGSize(width: 500, height: 500)
 
     private static let bg = UIColor(red: 0.04, green: 0.04, blue: 0.06, alpha: 1)
     private static let panel = UIColor(red: 0.09, green: 0.09, blue: 0.12, alpha: 1)
@@ -70,7 +87,11 @@ enum PipRenderer {
             if let hp = m.oppHpPercent {
                 drawRight("相手HP \(Int(hp))%", right: size.width - pad, y: y + 4, font: .systemFont(ofSize: 14, weight: .semibold), color: sub)
             }
-            y += 32
+            y += 30
+            if let label = m.pageLabel, !label.isEmpty, label != "対面" {
+                draw("◀ \(label)(真ん中のボタンで対面に戻る)", at: CGPoint(x: pad, y: y), font: .systemFont(ofSize: 12, weight: .bold), color: yellow)
+                y += 18
+            }
 
             if m.waiting == true {
                 draw(m.message ?? "", at: CGPoint(x: pad, y: y + 8), font: .systemFont(ofSize: 17), color: sub)
@@ -129,13 +150,38 @@ enum PipRenderer {
                 y += 24
             }
 
+            y += 4
+            let bench = m.bench ?? []
+            if !bench.isEmpty || !(m.remaining ?? []).isEmpty {
+                track.setFill()
+                UIBezierPath(rect: CGRect(x: pad, y: y, width: size.width - pad * 2, height: 1)).fill()
+                y += 6
+                for b in bench.prefix(2) {
+                    draw(benchLine(b), at: CGPoint(x: pad, y: y), font: .systemFont(ofSize: 13), color: b.fainted == true ? sub : text, maxWidth: size.width - pad * 2)
+                    y += 19
+                }
+                if let rest = m.remaining, !rest.isEmpty {
+                    draw("まだ出ていない候補:" + rest.joined(separator: "・"), at: CGPoint(x: pad, y: y), font: .systemFont(ofSize: 12), color: sub, maxWidth: size.width - pad * 2)
+                    y += 18
+                }
+            }
+
             if let note = m.note, !note.isEmpty {
-                draw(note, at: CGPoint(x: pad, y: size.height - 22), font: .systemFont(ofSize: 12), color: sub)
+                draw(note, at: CGPoint(x: pad, y: size.height - 20), font: .systemFont(ofSize: 12), color: sub)
             }
         }
     }
 
     // MARK: - 部品
+
+    private static func benchLine(_ b: PipViewModel.BenchItem) -> String {
+        if b.fainted == true { return "控え \(b.species):ひん死" }
+        if b.active == true { return "場の相手 \(b.species) HP\(Int(b.hpPercent ?? 100))%" }
+        var parts = ["控え \(b.species) HP\(Int(b.hpPercent ?? 100))%"]
+        if let mv = b.moves, !mv.isEmpty { parts.append(mv.joined(separator: "・") + " ✓") }
+        if let s = b.setName { parts.append(s + "?") }
+        return parts.joined(separator: " / ")
+    }
 
     private static func drawRow(_ r: PipViewModel.Row, y: CGFloat, bar: UIColor, dim: UIColor) {
         let pad: CGFloat = 16
