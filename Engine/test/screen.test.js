@@ -21,7 +21,11 @@ const boxes = (opp, pct, me, hp) => [
 
 test('相手と自分の名前・HPを読む。交代もHPも2回続けて同じときだけ渡す', () => {
   const r = new ScreenReader();
-  const frame = () => r.read([...ui, ...boxes('リザードン', 100, 'スターミー', '137/137')]);
+  const frame = () => {
+    const res = r.read([...ui, ...boxes('リザードン', 100, 'スターミー', '137/137')]);
+    res.inputs = res.inputs.filter(i => i.kind !== 'note');  // 動作確認用のメモは除く
+    return res;
+  };
   assert.deepStrictEqual(frame().inputs, [], '1回目は待つ');
   const f2 = frame();
   assert.deepStrictEqual(f2.inputs.map(i => [i.kind, i.side, i.name]), [['switch', 'opp', 'リザードン'], ['switch', 'me', 'スターミー']]);
@@ -166,4 +170,19 @@ test('選出画面で名前が小窓に隠れていても、番号の位置と�
   const res = r.read(obs);
   assert.strictEqual(res.mode, 'select');
   assert.deepStrictEqual(res.selection, ['カイリュー', 'カバルドン', 'イダイトウ']);
+});
+
+test('名前欄に読めた文字を、動作確認用のメモとして変わったときだけ出す', () => {
+  const r = new ScreenReader();
+  const notes = () => r.read([...ui, ...boxes('ドラパルト', 100, 'カイリュー', '168/168')]).inputs.filter(i => i.kind === 'note');
+  assert.deepStrictEqual(notes().map(i => i.text), ['相手の欄「07:00ドラパルト♂100%」 自分の欄「カイリュー168/168」']);
+  assert.deepStrictEqual(notes(), [], '同じなら出さない');
+});
+
+test('HPの数字が読めなくても、名前だけで交代は分かる', () => {
+  const r = new ScreenReader();
+  r.party = team6.map(m => m.species);
+  const f = () => r.read([...ui, O('ドラパルト', 0.834, 0.053), O('カイリュー', 0.08, 0.88)]);
+  f(); f();
+  assert.deepStrictEqual(r.active, {me: 'カイリュー', opp: 'ドラパルト'});
 });

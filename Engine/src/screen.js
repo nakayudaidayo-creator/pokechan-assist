@@ -131,6 +131,7 @@ class ScreenReader {
     this.active = {me: null, opp: null};
     this.mode = 'unknown';
     this.pending = {me: null, opp: null};
+    this.lastNote = null;
   }
 
   /** 交代は、同じ名前が2回続けて読めたら確定 */
@@ -174,15 +175,15 @@ class ScreenReader {
     const pick = box => obs.filter(o => inBox(o, box));
 
     // 相手:名前とHP%。
-    // 名前欄は演出で左右が入れ替わって見えることがあるので、次をすべて満たすときだけ交代とみなす
-    //  ・相手の欄には「%」のHPがあり、「残り/最大」のHPがない
+    // 名前欄は演出で左右が入れ替わって見えることがあるので、次を満たすときだけ交代とみなす
+    //  ・相手の欄に「残り/最大」の形のHP(自分の欄の形)がない
     //  ・自分の場のポケモンと同じ名前ではない(同じポケモンどうしの対面はテロップで分かる)
     //  ・2回続けて同じ名前が読める
     const oppObs = pick(LAYOUT.oppBox);
     const oppText = oppObs.map(o => norm(o.text)).join('');
     const oppName = findSpecies(oppObs.map(o => o.text));
     const pct = oppObs.map(o => norm(o.text).match(/^(\d{1,3})%$/)).find(Boolean);
-    const oppOk = oppName && /\d%/.test(oppText) && !/\d\/\d/.test(oppText) && oppName !== this.active.me;
+    const oppOk = oppName && !/\d\/\d/.test(oppText) && oppName !== this.active.me;
     if (oppOk && oppName !== this.active.opp && this.confirm('opp', oppName)) {
       this.active.opp = oppName;
       this.hp.opp = {shown: null, seen: null, count: 0};
@@ -195,13 +196,13 @@ class ScreenReader {
       if (this.stable('opp', v)) inputs.push({kind: 'hp', side: 'opp', name: this.active.opp, percent: v});
     }
 
-    // 自分:名前とHP(残り/最大)。自分のパーティにいるポケモンで、「残り/最大」のHPと一緒に2回続けて読めたときだけ
+    // 自分:名前とHP(残り/最大)。自分のパーティにいるポケモンで、「%」のHP(相手の欄の形)がなく、2回続けて読めたときだけ
     const myObs = pick(LAYOUT.myBox);
     const hpText = myObs.map(o => norm(o.text)).join('');
     const myName = findSpecies(myObs.map(o => o.text));
     const hp = hpText.match(/(\d{1,3})\/(\d{2,3})/);
     const inParty = !this.party.length || this.party.includes(myName);
-    const myOk = myName && hp && inParty;
+    const myOk = myName && inParty && !/\d%/.test(hpText);
     if (myOk && myName !== this.active.me && this.confirm('me', myName)) {
       this.active.me = myName;
       this.hp.me = {shown: null, seen: null, count: 0};
@@ -209,6 +210,14 @@ class ScreenReader {
     } else if (!myOk || myName === this.active.me) {
       this.pending.me = null;
     }
+
+    // 動作確認用:名前欄に読めた文字が変わったら、そのまま知らせる(動作確認タブの「読み取った出来事」に出る)
+    const note = `相手の欄「${oppText}」 自分の欄「${hpText}」`;
+    if ((oppText || hpText) && note !== this.lastNote) {
+      this.lastNote = note;
+      inputs.push({kind: 'note', text: note});
+    }
+
     if (hp && this.active.me && myName === this.active.me) {
       const cur = +hp[1], max = +hp[2];
       if (cur <= max && this.stable('me', cur)) inputs.push({kind: 'hp', side: 'me', name: this.active.me, cur, max});

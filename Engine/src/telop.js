@@ -184,6 +184,7 @@ function parse(input) {
     case 'telop': return parseTelop(input.text);
     case 'banner': return parseBanner(input.side, input.text);
     case 'log': return parseLog(input.text);
+    case 'note': return [];  // 動作確認用のメモ(バトル状態には使わない)
     case 'switch': return [{type: 'switchIn', side: input.side, species: norm(input.name)}];
     case 'hp': {
       const e = {type: 'hp', side: input.side, species: norm(input.name), source: 'bar'};
