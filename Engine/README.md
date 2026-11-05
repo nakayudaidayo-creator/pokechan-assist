@@ -61,3 +61,10 @@ const input = b.toCalcInput(b.damageLog[0]);   // そのまま engine.damage(inp
 - `data/sets.json`:Smogon のダメージ計算に入っているポケモンチャンピオンズ用の型(シングル用の BSS を優先)を日本語にしたもの。`tools/build_sets.js` で作成。107種・312型
 - `src/infer.js`:よくある型と汎用の型(無振り・アタッカー・耐久振り)を候補にし、判明した特性・持ち物・使った技、削れ方、受けたダメージ、先手・後手で点数を付けて並べる
 - `src/pip.js`:バトル状態から小窓(案A)の表示内容を作る。こちらの技→相手、相手の技→自分(使われた技に✓)、判明した情報(✓)と想定(?)、型の候補、先手・後手
+
+## アプリへの反映(自動更新)
+
+- `tools/build_ios.sh` でエンジンを `App/Resources/pokechan-engine.js` にまとめ、中身が変わったときだけ `engine-version.json` の版番号を上げます
+- アプリは起動時(と「動作確認」タブのボタン)で GitHub 上の `engine-version.json` を見て、手元より新しければ `pokechan-engine.js` を取得します。ファイルの指紋(SHA-256)の照合と、試しに読み込んで動くかを確かめてから保存します
+- 対戦中は切り替えず、次にアプリを開いたときに反映します。通信できないときは今の版のまま動きます
+- つまり **エンジンやデータの修正は、ビルドして push するだけで iPhone に届きます**(Sideloadly での入れ直しは不要)

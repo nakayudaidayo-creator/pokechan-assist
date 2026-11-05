@@ -4,6 +4,10 @@ import UIKit
 final class AppState: ObservableObject {
     let pip = PiPController()
     let receiver = BroadcastReceiver()
+    let updater = EngineUpdater()
+
+    /// 対戦の状態は計算エンジンの中にあるので、対戦中はエンジンを入れ替えない
+    private(set) var battleActive = false
 
     @Published private(set) var view: PipViewModel = .message("画面収録を開始するか、計算タブで対面を選んでください")
     @Published private(set) var image: UIImage = PipRenderer.render(.message("画面収録を開始するか、計算タブで対面を選んでください"))
@@ -21,12 +25,17 @@ final class AppState: ObservableObject {
             self?.image ?? PipRenderer.render(.message("待機中"))
         }
         pip.setup()
+
+        updater.canSwitchNow = { [weak self] in !(self?.battleActive ?? false) }
+        updater.onSwitched = { [weak self] in self?.refresh() }
+        updater.check()
     }
 
     /// 対戦を始める(自分のパーティと、分かっていれば相手の6匹)
     func startBattle(party: [Member], opponentTeam: [String]) {
         let members = party.map { battleDict($0) }
         _ = EngineBridge.shared.call("battleStart", ["party": members, "opponentTeam": opponentTeam])
+        battleActive = true
         refresh()
     }
 

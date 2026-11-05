@@ -15,7 +15,7 @@ struct ContentView: View {
                     .tabItem { Label("計算", systemImage: "function") }
                 PartyView(party: party)
                     .tabItem { Label("パーティ", systemImage: "person.3") }
-                DiagnosticsView(receiver: state.receiver)
+                DiagnosticsView(receiver: state.receiver, updater: state.updater)
                     .tabItem { Label("動作確認", systemImage: "wrench.and.screwdriver") }
             }
         }
@@ -97,6 +97,7 @@ struct BroadcastPickerView: UIViewRepresentable {
 /// 動作確認:画面録画の開始と、拡張機能からの受信状況
 struct DiagnosticsView: View {
     @ObservedObject var receiver: BroadcastReceiver
+    @ObservedObject var updater: EngineUpdater
 
     var body: some View {
         ScrollView {
@@ -118,9 +119,15 @@ struct DiagnosticsView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 GroupBox("計算エンジン") {
-                    Text(EngineBridge.shared.loadError ?? "読み込み済み")
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(EngineBridge.shared.loadError ?? "版 \(EngineBridge.shared.version)(\(EngineBridge.shared.origin))")
+                        Text("更新の確認:\(updater.status)")
+                            .font(.footnote).foregroundColor(.secondary)
+                        Button("今すぐ更新を確認") { updater.check() }
+                            .buttonStyle(.bordered)
+                    }
+                    .font(.footnote)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .padding()

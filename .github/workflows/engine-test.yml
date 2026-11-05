@@ -3,7 +3,7 @@ name: 計算エンジンのテスト
 on:
   push:
     branches: [main]
-    paths: ['Engine/**', 'Data/**', '.github/workflows/engine-test.yml']
+    paths: ['Engine/**', 'Data/**', 'App/Resources/**', '.github/workflows/engine-test.yml']
   workflow_dispatch:
 
 jobs:
@@ -18,3 +18,13 @@ jobs:
         run: node --test Engine/test/engine.test.js Engine/test/battle.test.js Engine/test/infer.test.js
       - name: 実数値の式を確認
         run: python3 Tools/check_sp_formula.py
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.4'
+      - name: アプリ用の計算エンジンが最新か確認
+        run: |
+          ./Engine/tools/build_ios.sh
+          if ! git diff --quiet -- App/Resources/pokechan-engine.js; then
+            echo "::error::App/Resources/pokechan-engine.js が古いままです。Engine/tools/build_ios.sh を実行してから push してください"
+            exit 1
+          fi
