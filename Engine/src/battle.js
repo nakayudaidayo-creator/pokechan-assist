@@ -108,7 +108,20 @@ class Battle {
     this.current = null;
   }
 
+  /**
+   * テロップの「相手の」を読み落とすと、相手の行動が自分の行動に見える。
+   * 名前がこちらの場のポケモンと違い、反対側の場のポケモンと同じなら、反対側の出来事とみなす
+   */
+  fixSide(ev) {
+    if (!ev.side || !ev.species || ev.type === 'switchIn' || ev.type === 'switchOut') return ev;
+    const other = ev.side === 'me' ? 'opp' : 'me';
+    const here = this.sides[ev.side].active, there = this.sides[other].active;
+    if (here && here !== ev.species && there === ev.species) return Object.assign({}, ev, {side: other});
+    return ev;
+  }
+
   apply(ev) {
+    ev = this.fixSide(ev);
     switch (ev.type) {
       case 'turn':
         this.turn = ev.turn;
@@ -167,7 +180,8 @@ class Battle {
         if (!attacker.moves.includes(ev.move)) attacker.moves.push(ev.move);
         attacker.movesThisSwitch.push(ev.move);
         this.recordOrder(ev.side, ev.move);
-        this.sides[ev.side].active = ev.species;
+        // 場のポケモンは名前欄と交代のテロップで決める。技のテロップでは、まだ分からないときだけ
+        if (!this.sides[ev.side].active) this.sides[ev.side].active = ev.species;
         const defSide = ev.side === 'me' ? 'opp' : 'me';
         const defender = this.mon(defSide);
         this.current = {

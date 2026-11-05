@@ -154,6 +154,13 @@ class ScreenReader {
     const inputs = [];
     let newBattle = false;
 
+    // 縦向きの画面(このアプリやホーム画面を見ているとき)は、横向きに直した画像では文字が縦になる。
+    // 文字のかたまりの多くが縦長なら、ゲームの画面ではないので読まない
+    const tall = obs.filter(o => o.h > o.w * 1.5).length;
+    if (obs.length >= 3 && tall > obs.length / 2) {
+      return {mode: 'other', inputs, newBattle, debug: {tall}};
+    }
+
     // 選出画面:新しい対戦の始まり
     if (/選出してください/.test(all) || (/戦うポケモン/.test(all) && /選出/.test(all))) {
       if (this.mode !== 'select') newBattle = true;
@@ -212,8 +219,10 @@ class ScreenReader {
     }
 
     // 動作確認用:名前欄に読めた文字が変わったら、そのまま知らせる(動作確認タブの「読み取った出来事」に出る)
-    const note = `相手の欄「${oppText}」 自分の欄「${hpText}」`;
-    if ((oppText || hpText) && note !== this.lastNote) {
+    // 残り時間(04:21)や COMMAND の数字は毎秒変わるので除く
+    const clean = t => t.replace(/\d{1,2}:\d{2}/g, '').replace(/COMMAND\d*/gi, '');
+    const note = `相手の欄「${clean(oppText)}」 自分の欄「${clean(hpText)}」`;
+    if ((clean(oppText) || clean(hpText)) && note !== this.lastNote) {
       this.lastNote = note;
       inputs.push({kind: 'note', text: note});
     }

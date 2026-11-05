@@ -175,7 +175,7 @@ test('選出画面で名前が小窓に隠れていても、番号の位置と�
 test('名前欄に読めた文字を、動作確認用のメモとして変わったときだけ出す', () => {
   const r = new ScreenReader();
   const notes = () => r.read([...ui, ...boxes('ドラパルト', 100, 'カイリュー', '168/168')]).inputs.filter(i => i.kind === 'note');
-  assert.deepStrictEqual(notes().map(i => i.text), ['相手の欄「07:00ドラパルト♂100%」 自分の欄「カイリュー168/168」']);
+  assert.deepStrictEqual(notes().map(i => i.text), ['相手の欄「ドラパルト♂100%」 自分の欄「カイリュー168/168」']);
   assert.deepStrictEqual(notes(), [], '同じなら出さない');
 });
 
@@ -185,4 +185,24 @@ test('HPの数字が読めなくても、名前だけで交代は分かる', () 
   const f = () => r.read([...ui, O('ドラパルト', 0.834, 0.053), O('カイリュー', 0.08, 0.88)]);
   f(); f();
   assert.deepStrictEqual(r.active, {me: 'カイリュー', opp: 'ドラパルト'});
+});
+
+test('実機:自分カバルドン・相手ミミッキュ(どちらも自分のパーティにいる)で、「相手の」を読み落としても逆にならない', () => {
+  const r = new ScreenReader();
+  r.party = team6.map(m => m.species);
+  const b = new Battle({party: team6});
+  const frame = extra => { for (const i of r.read([...ui, ...boxes('ミミッキュ', 100, 'カバルドン', '215/215'), ...(extra || [])]).inputs) b.feed(i); };
+  frame(); frame();
+  assert.deepStrictEqual([b.sides.me.active, b.sides.opp.active], ['カバルドン', 'ミミッキュ']);
+  // 「相手の」が読めず「ミミッキュの じゃれつく!」になった
+  frame([O('ミミッキュの', 0.152, 0.75, 0.22, 0.035), O('じゃれつく!', 0.152, 0.815, 0.17, 0.035)]);
+  assert.deepStrictEqual([b.sides.me.active, b.sides.opp.active], ['カバルドン', 'ミミッキュ']);
+  assert.ok(b.sides.opp.mons['ミミッキュ'].moves.includes('じゃれつく'), '相手の技として記録');
+});
+
+test('縦向きの画面(このアプリの画面など)は読まない', () => {
+  const r = new ScreenReader();
+  const res = r.read([O('ミミッキュ', 0.9, 0.08, 0.02, 0.3), O('カバルドン', 0.1, 0.08, 0.02, 0.4), O('相手の欄', 0.5, 0.08, 0.02, 0.5)]);
+  assert.strictEqual(res.mode, 'other');
+  assert.deepStrictEqual(res.inputs, []);
 });
