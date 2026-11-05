@@ -6,6 +6,7 @@ final class AppState: ObservableObject {
     let receiver = BroadcastReceiver()
     let frames = FrameReceiver()
     let updater = EngineUpdater()
+    let logger = BattleLogger()
 
     /// 対戦の状態は計算エンジンの中にあるので、対戦中はエンジンを入れ替えない
     private(set) var battleActive = false
@@ -67,12 +68,13 @@ final class AppState: ObservableObject {
         guard let r = EngineBridge.shared.call("screenRead", ["observations": observations.map { $0.dict }]) as? [String: Any] else { return }
         lastScreenMode = r["mode"] as? String ?? "-"
         let inputs = (r["inputs"] as? [[String: Any]]) ?? []
+        logger.record(mode: lastScreenMode, newBattle: r["newBattle"] as? Bool ?? false, observations: observations, inputs: inputs)
         if !inputs.isEmpty {
             let lines = inputs.map { i -> String in
                 [i["kind"], i["side"], i["name"], i["text"], i["percent"], i["cur"]]
                     .compactMap { $0.map { "\($0)" } }.joined(separator: " ")
             }
-            lastScreenInputs = Array((lines + lastScreenInputs).prefix(12))
+            lastScreenInputs = Array((lines + lastScreenInputs).prefix(30))
             refresh()
         }
     }

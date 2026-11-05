@@ -38,6 +38,8 @@ targets:
         UIBackgroundModes:
           - audio
         NSLocalNetworkUsageDescription: 画面録画の拡張機能から読み取り結果を受け取るために使います
+        UIFileSharingEnabled: true
+        LSSupportsOpeningDocumentsInPlace: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationLandscapeLeft

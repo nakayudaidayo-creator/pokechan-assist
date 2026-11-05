@@ -152,6 +152,7 @@ struct DiagnosticsView: View {
                     .font(.footnote)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
+                LogListView(logger: state.logger)
                 GroupBox("計算エンジン") {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(EngineBridge.shared.loadError ?? "版 \(EngineBridge.shared.version)(\(EngineBridge.shared.origin))")
@@ -167,4 +168,55 @@ struct DiagnosticsView: View {
             .padding()
         }
     }
+}
+
+/// 対戦ごとの読み取りの記録(読み取った文字をすべて残したもの)
+struct LogListView: View {
+    @ObservedObject var logger: BattleLogger
+    @State private var opened: URL?
+
+    var body: some View {
+        GroupBox("対戦の記録(読み取った文字をすべて残しています)") {
+            VStack(alignment: .leading, spacing: 8) {
+                if logger.files.isEmpty {
+                    Text("まだありません。画面収録をして対戦すると、対戦ごとに残ります")
+                        .font(.footnote).foregroundColor(.secondary)
+                }
+                ForEach(logger.files.prefix(10), id: \.self) { url in
+                    HStack {
+                        Button(url.deletingPathExtension().lastPathComponent) { opened = url }
+                        Spacer()
+                        Text(logger.size(of: url)).font(.caption).foregroundColor(.secondary)
+                        ShareLink(item: url) { Image(systemName: "square.and.arrow.up") }
+                    }
+                    .font(.footnote)
+                }
+                Text("「ファイル」アプリの「このiPhone内 → ポケチャン補助 → logs」にもあります。共有ボタンからClaudeに送れます")
+                    .font(.caption2).foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .onAppear { logger.refresh() }
+        .sheet(item: $opened) { url in
+            NavigationStack {
+                ScrollView {
+                    Text(logger.text(of: url))
+                        .font(.system(size: 11, design: .monospaced))
+                        .textSelection(.enabled)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                }
+                .navigationTitle(url.deletingPathExtension().lastPathComponent)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) { Button("閉じる") { opened = nil } }
+                    ToolbarItem(placement: .primaryAction) { ShareLink(item: url) }
+                }
+            }
+        }
+    }
+}
+
+extension URL: @retroactive Identifiable {
+    public var id: String { absoluteString }
 }

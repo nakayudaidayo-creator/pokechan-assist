@@ -26,7 +26,8 @@ const UI_WORDS = /^(ログを見る|様子を見る|COMMAND|たたかう|ポケ�
 
 // 小窓(このアプリ自身の表示)も画面収録に映るので、その中の文字は読まない。
 // 小窓にしか出ない文字を目印に、小窓の範囲を割り出す
-const PIP_MARKS = /(⇄|相手HP|型の候補|こちらの攻撃|相手のよく使う技|^控え|まだ出ていない候補|ポケチャン補助|対戦の開始を待って|相手のポケモンを読み取り中|真ん中のボタン|^すばやさ:|^特性.*持ち物|^\d{1,3}-\d{1,3}%$|^[確乱]\d+$)/;
+// 文字認識が小窓の何行かを1つにまとめたり、少し読み違えたりしても見つかるよう、文の一部で探す
+const PIP_MARKS = /(⇄|⇆|相手HP|候補|の攻撃|よく使う|控え|まだ出ていない|ポケチャン|開始を待って|読み取り中|真ん中のボタン|[自相][分手]が先手|同速|特性.{0,12}持ち物|\d{1,3}-\d{1,3}%|^[確乱]\d+$|スカーフ込み)/;
 
 function pipRect(obs) {
   const marks = obs.filter(o => PIP_MARKS.test(norm(o.text)) || /⇄/.test(o.text));
@@ -120,6 +121,7 @@ function readSelection(obs, party = []) {
 
 class ScreenReader {
   constructor() {
+    this.selection = [];  // 選出画面で読んだ、自分が選んだ3匹
     this.party = [];  // 自分のパーティのポケモン名(自分の欄の読み違いを防ぐ)
     this.reset();
   }
@@ -156,18 +158,21 @@ class ScreenReader {
 
     // 縦向きの画面(このアプリやホーム画面を見ているとき)は、横向きに直した画像では文字が縦になる。
     // 文字のかたまりの多くが縦長なら、ゲームの画面ではないので読まない
-    const tall = obs.filter(o => o.h > o.w * 1.5).length;
-    if (obs.length >= 3 && tall > obs.length / 2) {
+    // (1〜2文字の数字などはもともと縦長なので、3文字以上のかたまりだけで数える)
+    const longs = obs.filter(o => norm(o.text).length >= 3);
+    const tall = longs.filter(o => o.h > o.w * 1.5).length;
+    if (longs.length >= 3 && tall > longs.length / 2) {
       return {mode: 'other', inputs, newBattle, debug: {tall}};
     }
 
     // 選出画面:新しい対戦の始まり
     if (/選出してください/.test(all) || (/戦うポケモン/.test(all) && /選出/.test(all))) {
-      if (this.mode !== 'select') newBattle = true;
+      if (this.mode !== 'select') { newBattle = true; this.selection = []; }
       this.mode = 'select';
       this.reset();
       this.mode = 'select';
       const selection = readSelection(raw, this.party);
+      if (selection.length === 3) this.selection = selection;
       return {mode: 'select', inputs, newBattle, selection, debug: {selection}};
     }
 
@@ -181,55 +186,60 @@ class ScreenReader {
     this.mode = 'battle';
     const pick = box => obs.filter(o => inBox(o, box));
 
-    // 相手:名前とHP%。
-    // 名前欄は演出で左右が入れ替わって見えることがあるので、次を満たすときだけ交代とみなす
-    //  ・相手の欄に「残り/最大」の形のHP(自分の欄の形)がない
-    //  ・自分の場のポケモンと同じ名前ではない(同じポケモンどうしの対面はテロップで分かる)
-    //  ・2回続けて同じ名前が読める
-    const oppObs = pick(LAYOUT.oppBox);
-    const oppText = oppObs.map(o => norm(o.text)).join('');
-    const oppName = findSpecies(oppObs.map(o => o.text));
-    const pct = oppObs.map(o => norm(o.text).match(/^(\d{1,3})%$/)).find(Boolean);
-    const oppOk = oppName && !/\d\/\d/.test(oppText) && oppName !== this.active.me;
-    if (oppOk && oppName !== this.active.opp && this.confirm('opp', oppName)) {
-      this.active.opp = oppName;
-      this.hp.opp = {shown: null, seen: null, count: 0};
-      inputs.push({kind: 'switch', side: 'opp', name: oppName, text: `相手の欄「${oppText}」`});
-    } else if (!oppOk || oppName === this.active.opp) {
-      this.pending.opp = null;
+    // 名前欄(右上と左下)。実機では、演出で自分のポケモンの欄が右上に出ることがある(2026-11-05 確認)。
+    // そこで、どちら側のポケモンかは、まずHPの形で決める:「残り/最大」なら自分、「%」なら相手。
+    // HPが読めないときだけ、位置(右上 = 相手、左下 = 自分)で決める。
+    const panels = [
+      {where: '右上', obs: pick(LAYOUT.oppBox), side: 'opp'},
+      {where: '左下', obs: pick(LAYOUT.myBox), side: 'me'},
+    ];
+    const seen = {me: null, opp: null};
+    for (const pnl of panels) {
+      pnl.text = pnl.obs.map(o => norm(o.text)).join('');
+      pnl.name = findSpecies(pnl.obs.map(o => o.text));
+      const frac = pnl.text.match(/(\d{1,3})\/(\d{2,3})/);
+      const pct = pnl.obs.map(o => norm(o.text).match(/^(\d{1,3})%$/)).find(Boolean) || pnl.text.match(/(\d{1,3})%/);
+      const byHp = frac ? 'me' : pct ? 'opp' : null;
+      const side = byHp || pnl.side;
+      if (!pnl.name) continue;
+      // 自分の側は自分のパーティにいるポケモンだけ。
+      // HPの形が分からないとき、相手の側に自分の場のポケモンと同じ名前が出たら、自分の欄とみなして使わない
+      if (side === 'me' && this.party.length && !this.party.includes(pnl.name)) continue;
+      // 選出した3匹が分かっていれば、その3匹だけ
+      if (side === 'me' && this.selection.length === 3 && !this.selection.includes(pnl.name)) continue;
+      if (side === 'opp' && !byHp && pnl.name === this.active.me) continue;
+      if (seen[side]) continue;
+      seen[side] = {name: pnl.name, frac, pct, where: pnl.where, text: pnl.text};
     }
-    if (pct && this.active.opp && oppName === this.active.opp) {
-      const v = Math.min(100, +pct[1]);
-      if (this.stable('opp', v)) inputs.push({kind: 'hp', side: 'opp', name: this.active.opp, percent: v});
+    for (const side of ['opp', 'me']) {
+      const v = seen[side];
+      if (!v) { this.pending[side] = null; continue; }
+      if (v.name !== this.active[side]) {
+        if (!this.confirm(side, v.name)) continue;
+        this.active[side] = v.name;
+        this.hp[side] = {shown: null, seen: null, count: 0};
+        inputs.push({kind: 'switch', side, name: v.name, text: `${v.where}の欄「${v.text}」`});
+      }
+      this.pending[side] = null;
+      if (side === 'opp' && v.pct) {
+        const pv = Math.min(100, +v.pct[1]);
+        if (this.stable('opp', pv)) inputs.push({kind: 'hp', side: 'opp', name: v.name, percent: pv});
+      }
+      if (side === 'me' && v.frac) {
+        const cur = +v.frac[1], max = +v.frac[2];
+        if (cur <= max && this.stable('me', cur)) inputs.push({kind: 'hp', side: 'me', name: v.name, cur, max});
+      }
     }
-
-    // 自分:名前とHP(残り/最大)。自分のパーティにいるポケモンで、「%」のHP(相手の欄の形)がなく、2回続けて読めたときだけ
-    const myObs = pick(LAYOUT.myBox);
-    const hpText = myObs.map(o => norm(o.text)).join('');
-    const myName = findSpecies(myObs.map(o => o.text));
-    const hp = hpText.match(/(\d{1,3})\/(\d{2,3})/);
-    const inParty = !this.party.length || this.party.includes(myName);
-    const myOk = myName && inParty && !/\d%/.test(hpText);
-    if (myOk && myName !== this.active.me && this.confirm('me', myName)) {
-      this.active.me = myName;
-      this.hp.me = {shown: null, seen: null, count: 0};
-      inputs.push({kind: 'switch', side: 'me', name: myName, text: `自分の欄「${hpText}」`});
-    } else if (!myOk || myName === this.active.me) {
-      this.pending.me = null;
-    }
+    const oppText = panels[0].text, hpText = panels[1].text;
+    const oppName = panels[0].name, myName = panels[1].name;
 
     // 動作確認用:名前欄に読めた文字が変わったら、そのまま知らせる(動作確認タブの「読み取った出来事」に出る)
     // 残り時間(04:21)や COMMAND の数字は毎秒変わるので除く
     const clean = t => t.replace(/\d{1,2}:\d{2}/g, '').replace(/COMMAND\d*/gi, '');
-    const note = `相手の欄「${clean(oppText)}」 自分の欄「${clean(hpText)}」`;
+    const note = `右上「${clean(oppText)}」 左下「${clean(hpText)}」`;
     if ((clean(oppText) || clean(hpText)) && note !== this.lastNote) {
       this.lastNote = note;
       inputs.push({kind: 'note', text: note});
-    }
-
-    if (hp && this.active.me && myName === this.active.me) {
-      const cur = +hp[1], max = +hp[2];
-      if (cur <= max && this.stable('me', cur)) inputs.push({kind: 'hp', side: 'me', name: this.active.me, cur, max});
     }
 
     // 特性・持ち物の帯
