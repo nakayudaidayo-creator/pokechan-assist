@@ -65,7 +65,11 @@ const api = {
 let battle = null;
 let party = [];
 const reader = new ScreenReader();
-api.setParty = input => { party = input.party || []; return party.length; };
+api.setParty = input => {
+  party = input.party || [];
+  reader.party = party.map(p => p.species || p.name).filter(Boolean);
+  return party.length;
+};
 api.battleStart = input => { battle = new Battle(input); pipPage = 0; myPage = 0; return battle.summary(); };
 
 /**

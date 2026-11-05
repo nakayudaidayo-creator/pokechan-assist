@@ -95,7 +95,9 @@ function parseTelop(raw) {
 
   // メガシンカの前ぶれ:「Xの Yナイトと (トレーナー)の ゼンブイリングが 反応した!」
   if ((m = text.match(/^(相手の)?(.+?)の(.+?)と.+が反応した/))) {
-    return [{type: 'itemRevealed', side: m[1] ? 'opp' : 'me', species: m[2], item: m[3]}];
+    // 反応した = このあとメガシンカする。メガシンカのテロップを読み落としても姿を変えられるよう、ここでも出す
+    const side = m[1] ? 'opp' : 'me';
+    return [{type: 'itemRevealed', side, species: m[2], item: m[3]}, {type: 'mega', side, species: m[2], megaName: m[3]}];
   }
 
   // メガシンカ

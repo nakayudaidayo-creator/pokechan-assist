@@ -137,3 +137,25 @@ test('急所:「急所に 当たった!」(ふりがなが混ざっても)を直
   assert.strictEqual(b.damageLog[0].damage.hp, 97);
   assert.strictEqual(b.toCalcInput(b.damageLog[0]).moveOptions.isCrit, true);
 });
+
+test('メガシンカしたら、メガシンカ後の姿・特性・すばやさで計算する', () => {
+  const party = require('../../Data/party.json').members;
+  const pip = require('../src/pip.js');
+  const b = new Battle({party});
+  b.feed({kind: 'switch', side: 'me', name: 'カイリュー'});
+  b.feed({kind: 'switch', side: 'opp', name: 'アシレーヌ'});
+  const before = pip.buildView(b, {}).speed.me;
+  b.feed({kind: 'telop', text: 'カイリューは メガカイリューに メガシンカした!'});
+  assert.strictEqual(b.sides.me.mons['カイリュー'].form, 'Dragonite-Mega');
+  const after = pip.buildView(b, {}).speed.me;
+  assert.ok(after > before, `すばやさが上がる(${before} → ${after})`);
+
+  // ルカリオナイトZ → メガルカリオZ。反応のテロップだけ読めた場合もメガシンカ後にする
+  b.feed({kind: 'switch', side: 'me', name: 'ルカリオ'});
+  b.feed({kind: 'telop', text: 'ルカリオの ルカリオナイトZと あなたの ゼンブイリングが 反応した!'});
+  assert.strictEqual(b.sides.me.mons['ルカリオ'].form, 'Lucario-Mega-Z');
+  // 相手側
+  b.feed({kind: 'switch', side: 'opp', name: 'リザードン'});
+  b.feed({kind: 'telop', text: '相手の リザードンは メガリザードンYに メガシンカした!'});
+  assert.strictEqual(b.sides.opp.mons['リザードン'].form, 'Charizard-Mega-Y');
+});

@@ -24,6 +24,19 @@ const LAYOUT = {
 // 画面に常に出ていて、テロップや帯と間違えやすい文字
 const UI_WORDS = /^(ログを見る|様子を見る|COMMAND|たたかう|ポケモン|戻る|\d+|[+XYABLR]|\d{1,2}:\d{2})$/;
 
+// 小窓(このアプリ自身の表示)も画面収録に映るので、その中の文字は読まない。
+// 小窓にしか出ない文字を目印に、小窓の範囲を割り出す
+const PIP_MARKS = /(⇄|相手HP|型の候補|こちらの攻撃|相手のよく使う技|^控え|まだ出ていない候補|ポケチャン補助|対戦の開始を待って|相手のポケモンを読み取り中|真ん中のボタン|^すばやさ:|^特性.*持ち物|^\d{1,3}-\d{1,3}%$|^[確乱]\d+$)/;
+
+function pipRect(obs) {
+  const marks = obs.filter(o => PIP_MARKS.test(norm(o.text)) || /⇄/.test(o.text));
+  if (!marks.length) return null;
+  const x0 = Math.min(...marks.map(o => o.x)), y0 = Math.min(...marks.map(o => o.y));
+  const x1 = Math.max(...marks.map(o => o.x + o.w)), y1 = Math.max(...marks.map(o => o.y + o.h));
+  // 目印のまわりを少し広げる(技名の行や下の余白も含める)
+  return {x0: x0 - 0.03, y0: y0 - 0.04, x1: x1 + 0.03, y1: y1 + 0.06};
+}
+
 function inBox(o, b) {
   const cx = o.x + o.w / 2, cy = o.y + o.h / 2;
   return cx >= b.x0 && cx <= b.x1 && cy >= b.y0 && cy <= b.y1;
@@ -74,7 +87,10 @@ function editDistance(a, b) {
  * 選出画面の左側から、自分が選んだポケモンを選んだ順に読む。
  * 選んだポケモンの欄の左に、大きな数字(1・2・3)が出る
  */
-function readSelection(obs) {
+// 選出画面の自分の6匹の欄(上から順。縦方向の中心と間隔)
+const SELECT_ROWS = {y0: 0.17, step: 0.1165, count: 6};
+
+function readSelection(obs, party = []) {
   const names = [];
   for (const o of obs) {
     if (o.x > 0.33) continue;
@@ -91,7 +107,12 @@ function readSelection(obs) {
       const dy = Math.abs(n.cy - cy);
       if (dy < 0.06 && (!best || dy < best.dy)) best = {name: n.name, dy};
     }
-    if (best) picks.push({order: +t, name: best.name});
+    if (best) { picks.push({order: +t, name: best.name}); continue; }
+    // 名前が小窓に隠れて読めないときは、欄の位置(上から何番目か)とパーティの並びで決める
+    const row = Math.round((cy - SELECT_ROWS.y0) / SELECT_ROWS.step);
+    if (row >= 0 && row < SELECT_ROWS.count && party[row] && Math.abs(cy - (SELECT_ROWS.y0 + row * SELECT_ROWS.step)) < 0.045) {
+      picks.push({order: +t, name: party[row]});
+    }
   }
   picks.sort((a, b) => a.order - b.order);
   return [...new Set(picks.map(p => p.name))];
@@ -99,6 +120,7 @@ function readSelection(obs) {
 
 class ScreenReader {
   constructor() {
+    this.party = [];  // 自分のパーティのポケモン名(自分の欄の読み違いを防ぐ)
     this.reset();
   }
 
@@ -108,6 +130,14 @@ class ScreenReader {
     this.hp = {me: {shown: null, seen: null, count: 0}, opp: {shown: null, seen: null, count: 0}};
     this.active = {me: null, opp: null};
     this.mode = 'unknown';
+    this.pending = {me: null, opp: null};
+  }
+
+  /** 交代は、同じ名前が2回続けて読めたら確定 */
+  confirm(side, name) {
+    if (this.pending[side] === name) { this.pending[side] = null; return true; }
+    this.pending[side] = name;
+    return false;
   }
 
   /**
@@ -115,7 +145,9 @@ class ScreenReader {
    * @returns {{mode: string, inputs: Array, newBattle: boolean, debug: object}}
    */
   read(observations) {
-    const obs = (observations || []).filter(o => o && o.text && norm(o.text));
+    const raw = (observations || []).filter(o => o && o.text && norm(o.text));
+    const pip = pipRect(raw);
+    const obs = pip ? raw.filter(o => !inBox(o, pip)) : raw;
     const texts = obs.map(o => norm(o.text));
     const all = texts.join('');
     const inputs = [];
@@ -127,7 +159,7 @@ class ScreenReader {
       this.mode = 'select';
       this.reset();
       this.mode = 'select';
-      const selection = readSelection(obs);
+      const selection = readSelection(raw, this.party);
       return {mode: 'select', inputs, newBattle, selection, debug: {selection}};
     }
 
@@ -141,31 +173,43 @@ class ScreenReader {
     this.mode = 'battle';
     const pick = box => obs.filter(o => inBox(o, box));
 
-    // 相手:名前とHP%
+    // 相手:名前とHP%。
+    // 名前欄は演出で左右が入れ替わって見えることがあるので、次をすべて満たすときだけ交代とみなす
+    //  ・相手の欄には「%」のHPがあり、「残り/最大」のHPがない
+    //  ・自分の場のポケモンと同じ名前ではない(同じポケモンどうしの対面はテロップで分かる)
+    //  ・2回続けて同じ名前が読める
     const oppObs = pick(LAYOUT.oppBox);
+    const oppText = oppObs.map(o => norm(o.text)).join('');
     const oppName = findSpecies(oppObs.map(o => o.text));
-    if (oppName && oppName !== this.active.opp) {
+    const pct = oppObs.map(o => norm(o.text).match(/^(\d{1,3})%$/)).find(Boolean);
+    const oppOk = oppName && /\d%/.test(oppText) && !/\d\/\d/.test(oppText) && oppName !== this.active.me;
+    if (oppOk && oppName !== this.active.opp && this.confirm('opp', oppName)) {
       this.active.opp = oppName;
       this.hp.opp = {shown: null, seen: null, count: 0};
-      inputs.push({kind: 'switch', side: 'opp', name: oppName});
+      inputs.push({kind: 'switch', side: 'opp', name: oppName, text: `相手の欄「${oppText}」`});
+    } else if (!oppOk || oppName === this.active.opp) {
+      this.pending.opp = null;
     }
-    const pct = oppObs.map(o => norm(o.text).match(/^(\d{1,3})%$/)).find(Boolean);
-    if (pct && this.active.opp) {
+    if (pct && this.active.opp && oppName === this.active.opp) {
       const v = Math.min(100, +pct[1]);
       if (this.stable('opp', v)) inputs.push({kind: 'hp', side: 'opp', name: this.active.opp, percent: v});
     }
 
-    // 自分:名前とHP(残り/最大)
+    // 自分:名前とHP(残り/最大)。自分のパーティにいるポケモンで、「残り/最大」のHPと一緒に2回続けて読めたときだけ
     const myObs = pick(LAYOUT.myBox);
+    const hpText = myObs.map(o => norm(o.text)).join('');
     const myName = findSpecies(myObs.map(o => o.text));
-    if (myName && myName !== this.active.me) {
+    const hp = hpText.match(/(\d{1,3})\/(\d{2,3})/);
+    const inParty = !this.party.length || this.party.includes(myName);
+    const myOk = myName && hp && inParty;
+    if (myOk && myName !== this.active.me && this.confirm('me', myName)) {
       this.active.me = myName;
       this.hp.me = {shown: null, seen: null, count: 0};
-      inputs.push({kind: 'switch', side: 'me', name: myName});
+      inputs.push({kind: 'switch', side: 'me', name: myName, text: `自分の欄「${hpText}」`});
+    } else if (!myOk || myName === this.active.me) {
+      this.pending.me = null;
     }
-    const hpText = myObs.map(o => norm(o.text)).join('');
-    const hp = hpText.match(/(\d{1,3})\/(\d{2,3})/);
-    if (hp && this.active.me) {
+    if (hp && this.active.me && myName === this.active.me) {
       const cur = +hp[1], max = +hp[2];
       if (cur <= max && this.stable('me', cur)) inputs.push({kind: 'hp', side: 'me', name: this.active.me, cur, max});
     }
@@ -196,7 +240,7 @@ class ScreenReader {
       }
     }
 
-    return {mode: 'battle', inputs, newBattle, debug: {oppName, myName, telop: tText}};
+    return {mode: 'battle', inputs, newBattle, debug: {oppName, myName, telop: tText, pip: !!pip}};
   }
 
   /** HPの数字が2回続けて同じになったら確定(減っていく途中は読まない) */
@@ -211,4 +255,4 @@ class ScreenReader {
   }
 }
 
-module.exports = {ScreenReader, LAYOUT, findSpecies, joinLines, readSelection};
+module.exports = {ScreenReader, LAYOUT, findSpecies, joinLines, readSelection, pipRect};

@@ -101,7 +101,14 @@ function makePokemon(p) {
   if (p.gender) opts.gender = p.gender === 'female' || p.gender === '♀' ? 'F' : p.gender === 'male' || p.gender === '♂' ? 'M' : 'N';
   if (p.abilityOn !== undefined) opts.abilityOn = p.abilityOn;
 
-  const mon = new calc.Pokemon(GEN, speciesName(p.name, p.form), opts);
+  // メガシンカ後は特性が変わる(メガカイリュー → マルチスケイル、メガルカリオZ → Aura Guard など)
+  const name = speciesName(p.name, p.form);
+  if (/-Mega/.test(name)) {
+    const data = GEN.species.get(name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+    const megaAbility = data && data.abilities && data.abilities[0];
+    if (megaAbility) opts.ability = megaAbility;
+  }
+  const mon = new calc.Pokemon(GEN, name, opts);
   if (p.hpPercent !== undefined) {
     mon.originalCurHP = Math.max(1, Math.round(mon.maxHP() * p.hpPercent / 100));
   }

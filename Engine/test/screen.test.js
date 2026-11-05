@@ -19,18 +19,18 @@ const boxes = (opp, pct, me, hp) => [
   O(me, 0.08, 0.88), O(hp, 0.13, 0.945, 0.075, 0.045),
 ];
 
-test('相手と自分の名前・HPを読み、HPは2回続けて同じときだけ渡す', () => {
+test('相手と自分の名前・HPを読む。交代もHPも2回続けて同じときだけ渡す', () => {
   const r = new ScreenReader();
-  const f1 = r.read([...ui, ...boxes('リザードン', 100, 'スターミー', '137/137')]);
-  assert.deepStrictEqual(f1.inputs.map(i => i.kind), ['switch', 'switch']);
-  assert.deepStrictEqual(f1.inputs[0], {kind: 'switch', side: 'opp', name: 'リザードン'});
-  const f2 = r.read([...ui, ...boxes('リザードン', 100, 'スターミー', '137/137')]);
-  assert.deepStrictEqual(f2.inputs, [
+  const frame = () => r.read([...ui, ...boxes('リザードン', 100, 'スターミー', '137/137')]);
+  assert.deepStrictEqual(frame().inputs, [], '1回目は待つ');
+  const f2 = frame();
+  assert.deepStrictEqual(f2.inputs.map(i => [i.kind, i.side, i.name]), [['switch', 'opp', 'リザードン'], ['switch', 'me', 'スターミー']]);
+  const f3 = frame();
+  assert.deepStrictEqual(f3.inputs, [
     {kind: 'hp', side: 'opp', name: 'リザードン', percent: 100},
     {kind: 'hp', side: 'me', name: 'スターミー', cur: 137, max: 137},
   ]);
-  const f3 = r.read([...ui, ...boxes('リザードン', 100, 'スターミー', '137/137')]);
-  assert.strictEqual(f3.inputs.length, 0, '変わらなければ何も渡さない');
+  assert.strictEqual(frame().inputs.length, 0, '変わらなければ何も渡さない');
 });
 
 test('テロップは文が読めるようになってから1回だけ渡す。ふりがなと画面の決まった文字は捨てる', () => {
@@ -64,8 +64,10 @@ test('特性・持ち物の帯を、左は自分・右は相手として読む',
 
 test('文字認識の1文字違いは、ポケモン名に直す', () => {
   const r = new ScreenReader();
-  const f = r.read([...ui, O('ガブリアヌ', 0.834, 0.053)]);
-  assert.deepStrictEqual(f.inputs[0], {kind: 'switch', side: 'opp', name: 'ガブリアス'});
+  const frame = () => r.read([...ui, O('ガブリアヌ', 0.834, 0.053), O('100%', 0.90, 0.12, 0.055, 0.04)]);
+  frame();
+  const f = frame();
+  assert.deepStrictEqual([f.inputs[0].side, f.inputs[0].name], ['opp', 'ガブリアス']);
 });
 
 test('選出画面とログ画面を見分ける', () => {
@@ -102,4 +104,66 @@ test('選出画面で、選んだ3匹を選んだ順に読む', () => {
     O('1', 0.045, 0.655, 0.02, 0.05), O('アーマーガア', 0.07, 0.645), O('ゴツゴツメット', 0.09, 0.69, 0.1),
   ]);
   assert.deepStrictEqual(res.selection, ['アーマーガア', 'ルカリオ']);
+});
+
+// ---- 実機(2026-11-05)で起きたこと ----------------------------------------
+// 小窓が画面収録に映り込み、小窓の中の名前や控えの行を読んでいた。
+// また、演出で名前欄の左右が入れ替わって見える瞬間に、自分と相手を取り違えた。
+
+// 左上の小窓(案A)に出る文字
+const pipObs = (title) => [
+  O(title, 0.09, 0.05, 0.12, 0.025), O('相手HP 100%', 0.25, 0.055, 0.04, 0.015),
+  O('特性 マルチスケイル? 持ち物 カイリュナイト?', 0.09, 0.085, 0.12, 0.013),
+  O('型の候補:ひかえめCS・メガ → ようきAS・ラムのみ', 0.09, 0.105, 0.17, 0.013),
+  O('すばやさ:相手が先手 (87 / 相手132)', 0.09, 0.125, 0.1, 0.013),
+  O('こちらの攻撃', 0.09, 0.16, 0.04, 0.014), O('相手のよく使う技', 0.09, 0.19, 0.05, 0.014),
+  O('10まんボルト', 0.09, 0.21, 0.04, 0.015), O('62-73%', 0.22, 0.21, 0.025, 0.014), O('確2', 0.28, 0.21, 0.012, 0.014),
+  O('控え カバルドン HP100% / わんぱくHB・オボンのみ?', 0.09, 0.31, 0.15, 0.013),
+  O('控え アーマーガア HP100% / わんぱくHB・残飯?', 0.09, 0.335, 0.15, 0.013),
+];
+
+test('小窓に映った文字は読まない', () => {
+  const r = new ScreenReader();
+  r.party = team6.map(m => m.species);
+  const frame = () => r.read([...ui, ...pipObs('アーマーガア ⇄ カイリュー'), ...boxes('アーマーガア', 100, 'カイリュー', '168/168')]);
+  frame();
+  const f = frame();
+  assert.strictEqual(f.debug.pip, true);
+  assert.deepStrictEqual(f.inputs.filter(i => i.kind === 'switch').map(i => [i.side, i.name]), [['opp', 'アーマーガア'], ['me', 'カイリュー']]);
+  assert.ok(!f.inputs.some(i => i.kind === 'banner' || i.kind === 'telop'), '小窓の行を帯やテロップとして読まない');
+});
+
+test('名前欄が入れ替わって見えても、自分と相手を取り違えない', () => {
+  const r = new ScreenReader();
+  r.party = team6.map(m => m.species);
+  const normal = () => r.read([...ui, ...boxes('アシレーヌ', 100, 'カイリュー', '168/168')]);
+  normal(); normal();
+  assert.deepStrictEqual(r.active, {me: 'カイリュー', opp: 'アシレーヌ'});
+  // 右上に自分のカイリュー(残り/最大のHP)、左下に相手のアシレーヌ(%)が出た瞬間
+  const swapped = () => r.read([...ui, O('カイリュー', 0.834, 0.053), O('168/168', 0.90, 0.12, 0.06, 0.04),
+    O('アシレーヌ', 0.08, 0.88), O('100%', 0.13, 0.945, 0.05, 0.045)]);
+  for (let k = 0; k < 3; k++) assert.deepStrictEqual(swapped().inputs.filter(i => i.kind === 'switch'), []);
+  assert.deepStrictEqual(r.active, {me: 'カイリュー', opp: 'アシレーヌ'});
+});
+
+test('1回だけ別の名前が読めても交代にしない', () => {
+  const r = new ScreenReader();
+  const f = name => r.read([...ui, ...boxes(name, 100, 'カイリュー', '168/168')]);
+  f('アシレーヌ'); f('アシレーヌ');
+  f('サーフゴー');
+  f('アシレーヌ');
+  assert.strictEqual(r.active.opp, 'アシレーヌ');
+});
+
+test('選出画面で名前が小窓に隠れていても、番号の位置とパーティの並びで選んだ3匹が分かる', () => {
+  const r = new ScreenReader();
+  r.party = team6.map(m => m.species);
+  const obs = [O('戦うポケモンを', 0.39, 0.18, 0.12), O('3匹 選出してください', 0.39, 0.22, 0.14),
+    ...pipObs('ポケチャン補助').slice(0, 1),
+    // 番号は左端。カイリュー(3番目の欄)→ カバルドン(1番目)→ イダイトウ(6番目)の順に選んだ
+    O('1', 0.03, 0.40 - 0.025, 0.02, 0.05), O('2', 0.03, 0.17 - 0.025, 0.02, 0.05), O('3', 0.03, 0.75 - 0.025, 0.02, 0.05),
+    O('ギルガルド', 0.15, 0.61, 0.08)];
+  const res = r.read(obs);
+  assert.strictEqual(res.mode, 'select');
+  assert.deepStrictEqual(res.selection, ['カイリュー', 'カバルドン', 'イダイトウ']);
 });

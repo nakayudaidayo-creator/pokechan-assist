@@ -19,6 +19,19 @@ function emptyMon(species) {
   };
 }
 
+/**
+ * メガシンカ後の姿。メガリザードンX・メガルカリオZ のように複数あるときは、
+ * テロップの名前か持ち物(〜ナイトX など)の最後の X・Y・Z で決める
+ */
+function megaForm(species, megaName, item) {
+  const forms = engine.formsOf(species).filter(f => /-Mega/.test(f));
+  if (!forms.length) return undefined;
+  const tail = s => (String(s || '').normalize('NFKC').match(/([XYZ])$/) || [])[1];
+  const t = tail(megaName) || tail(item);
+  if (t) return forms.find(f => f.endsWith('-Mega-' + t)) || forms[0];
+  return forms.find(f => /-Mega$/.test(f)) || forms[0];
+}
+
 class Battle {
   /**
    * @param {object} opts
@@ -120,9 +133,10 @@ class Battle {
 
       case 'mega': {
         const m = this.mon(ev.side, ev.species);
+        if (m.mega) break;
         m.mega = true;
-        const megaForm = engine.formsOf(ev.species).find(f => /-Mega/.test(f));
-        if (megaForm) m.form = megaForm;
+        const item = m.item || (ev.side === 'me' ? (this.party.find(p => p.species === ev.species) || {}).item : '');
+        m.form = megaForm(ev.species, ev.megaName, item) || m.form;
         break;
       }
 
