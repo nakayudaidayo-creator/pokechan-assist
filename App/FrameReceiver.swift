@@ -15,6 +15,30 @@ struct TextObservation {
     var dict: [String: Any] { ["text": text, "x": x, "y": y, "w": w, "h": h, "conf": conf] }
 }
 
+/// 日本語の文字認識(画面の読み取りとパーティの取り込みで共通に使う)
+enum TextRecognizer {
+    /// 時間がかかるので、メインスレッド以外で呼ぶ
+    static func recognize(_ cg: CGImage) -> [TextObservation] {
+        let request = VNRecognizeTextRequest()
+        request.recognitionLevel = .accurate
+        request.recognitionLanguages = ["ja-JP", "en-US"]
+        request.usesLanguageCorrection = false
+        request.minimumTextHeight = 0.012
+        var results: [TextObservation] = []
+        do {
+            try VNImageRequestHandler(cgImage: cg, options: [:]).perform([request])
+            for o in request.results ?? [] {
+                guard let c = o.topCandidates(1).first else { continue }
+                let b = o.boundingBox  // 左下が原点
+                results.append(TextObservation(text: c.string, x: b.minX, y: 1 - b.maxY, w: b.width, h: b.height, conf: Double(c.confidence)))
+            }
+        } catch {
+            return []
+        }
+        return results
+    }
+}
+
 /// 拡張機能から画面の画像を受け取り、日本語の文字認識をして結果を渡す。
 /// 文字認識が終わる前に次の画像が届いたら、古い方は捨てて最新だけを処理する。
 final class FrameReceiver: ObservableObject {
@@ -102,23 +126,7 @@ final class FrameReceiver: ObservableObject {
             finish()
             return
         }
-        let request = VNRecognizeTextRequest()
-        request.recognitionLevel = .accurate
-        request.recognitionLanguages = ["ja-JP", "en-US"]
-        request.usesLanguageCorrection = false
-        request.minimumTextHeight = 0.012
-
-        var results: [TextObservation] = []
-        do {
-            try VNImageRequestHandler(cgImage: cg, options: [:]).perform([request])
-            for o in request.results ?? [] {
-                guard let c = o.topCandidates(1).first else { continue }
-                let b = o.boundingBox  // 左下が原点
-                results.append(TextObservation(text: c.string, x: b.minX, y: 1 - b.maxY, w: b.width, h: b.height, conf: Double(c.confidence)))
-            }
-        } catch {
-            results = []
-        }
+        let results = TextRecognizer.recognize(cg)
         let millis = Int(Date().timeIntervalSince(started) * 1000)
         let lines = results.sorted { ($0.y, $0.x) < ($1.y, $1.x) }
             .map { String(format: "%@ (x%.2f y%.2f h%.3f)", $0.text, $0.x, $0.y, $0.h) }

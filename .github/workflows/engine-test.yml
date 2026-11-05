@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: '22'
       - name: テストを実行
-        run: node --test Engine/test/engine.test.js Engine/test/battle.test.js Engine/test/infer.test.js Engine/test/screen.test.js
+        run: node --test Engine/test/engine.test.js Engine/test/battle.test.js Engine/test/infer.test.js Engine/test/screen.test.js Engine/test/partyImport.test.js
       - name: 実数値の式を確認
         run: python3 Tools/check_sp_formula.py
       - uses: oven-sh/setup-bun@v2

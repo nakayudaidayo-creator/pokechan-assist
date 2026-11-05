@@ -38,38 +38,93 @@ struct PartyFile: Codable {
     var members: [Member]
 }
 
-/// パーティの保存と読み込み。編集内容は端末に保存し、最初はアプリに入っている party.json を使う
-final class PartyStore: ObservableObject {
-    @Published var members: [Member] = []
-    private let key = "party.v1"
+/// 登録したパーティ1つ
+struct Party: Codable, Identifiable, Hashable {
+    var id = UUID()
+    var name: String
+    var members: [Member]
+}
 
-    init() {
-        if let data = UserDefaults.standard.data(forKey: key),
-           let saved = try? JSONDecoder().decode([Member].self, from: data),
-           !saved.isEmpty {
-            members = saved
-        } else {
-            members = PartyStore.bundled()
+/// パーティの保存と読み込み(5つまで)。編集内容は端末に保存する。
+/// 最初はアプリに入っている party.json(チーム6)を1つ目として使う
+final class PartyStore: ObservableObject {
+    static let maxParties = 5
+
+    @Published var parties: [Party] = [] {
+        didSet { save() }
+    }
+    @Published var selected: Int = 0 {
+        didSet { save() }
+    }
+
+    private let key = "parties.v2"
+    private let oldKey = "party.v1"
+
+    /// 今使っているパーティの6匹(計算・対戦で使う)
+    var members: [Member] {
+        get { parties.indices.contains(selected) ? parties[selected].members : [] }
+        set {
+            guard parties.indices.contains(selected) else { return }
+            parties[selected].members = newValue
         }
     }
 
-    static func bundled() -> [Member] {
+    var currentName: String {
+        parties.indices.contains(selected) ? parties[selected].name : ""
+    }
+
+    init() {
+        struct Saved: Codable { var parties: [Party]; var selected: Int }
+        if let data = UserDefaults.standard.data(forKey: key),
+           let saved = try? JSONDecoder().decode(Saved.self, from: data),
+           !saved.parties.isEmpty {
+            parties = saved.parties
+            selected = min(max(0, saved.selected), saved.parties.count - 1)
+        } else if let data = UserDefaults.standard.data(forKey: oldKey),
+                  let old = try? JSONDecoder().decode([Member].self, from: data), !old.isEmpty {
+            // 1つだけ登録できた頃の保存内容を引き継ぐ
+            parties = [Party(name: "チーム6", members: old)]
+        } else {
+            parties = [PartyStore.bundled()]
+        }
+    }
+
+    static func bundled() -> Party {
         guard let url = Bundle.main.url(forResource: "party", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let file = try? JSONDecoder().decode(PartyFile.self, from: data)
-        else { return [] }
-        return file.members
+        else { return Party(name: "チーム6", members: []) }
+        return Party(name: file.name ?? "チーム6", members: file.members)
     }
 
     func save() {
-        if let data = try? JSONEncoder().encode(members) {
+        struct Saved: Codable { var parties: [Party]; var selected: Int }
+        if let data = try? JSONEncoder().encode(Saved(parties: parties, selected: selected)) {
             UserDefaults.standard.set(data, forKey: key)
         }
     }
 
+    /// 新しいパーティを追加して選ぶ(5つまで)
+    @discardableResult
+    func add(name: String, members: [Member] = []) -> Bool {
+        guard parties.count < PartyStore.maxParties else { return false }
+        parties.append(Party(name: name, members: members))
+        selected = parties.count - 1
+        save()
+        return true
+    }
+
+    func remove(at index: Int) {
+        guard parties.count > 1, parties.indices.contains(index) else { return }
+        parties.remove(at: index)
+        selected = min(selected, parties.count - 1)
+        save()
+    }
+
     func resetToBundled() {
-        members = PartyStore.bundled()
-        UserDefaults.standard.removeObject(forKey: key)
+        parties = [PartyStore.bundled()]
+        selected = 0
+        save()
     }
 }
 

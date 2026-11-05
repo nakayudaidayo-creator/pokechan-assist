@@ -6,6 +6,7 @@ import battleModule from './battle.js';
 import calc from '../vendor/smogon-calc.js';
 import pip from './pip.js';
 import screenModule from './screen.js';
+import partyImport from './partyImport.js';
 
 const {Battle} = battleModule;
 const {ScreenReader} = screenModule;
@@ -56,6 +57,8 @@ const api = {
   itemList: () => Object.keys(engine.names.items),
   abilityList: () => Object.keys(engine.names.abilities),
   natureList: () => Object.keys(engine.NATURES),
+  /** パーティ画面のスクショ(能力・ステータス)の文字認識結果から、6匹を取り込む */
+  importParty: input => partyImport.importParty(input.images || []),
 };
 
 // 対戦中の状態は1つだけ持つ
