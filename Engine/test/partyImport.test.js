@@ -178,3 +178,9 @@ test('技が読めなかったときは、読めなかった文字を確認画�
   const {warnings} = importParty([ab, statusScreen(team6)]);
   assert.ok(warnings.some(w => /カイリュー:技を3つしか読めませんでした\(読めなかった文字:ぜんぜんちがう\)/.test(w)), warnings.join('\n'));
 });
+
+test('実数値の最後の数字が欠けて読まれただけなら、知らせない', () => {
+  const st = statusScreen(team6).map(o => (o.text === '117' ? Object.assign({}, o, {text: '11'}) : o));
+  const {warnings} = importParty([abilityScreen(team6), st]);
+  assert.deepStrictEqual(warnings, []);
+});

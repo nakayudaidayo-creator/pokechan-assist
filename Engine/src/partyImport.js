@@ -304,6 +304,8 @@ function importParty(images) {
         const fix = solveSP(species, nature, sp, k, stats[k]);
         if (fix !== null) { sp[k] = fix; continue; }
         const calc = engine.stats({name: species, nature, sp})[k];
+        // 「117」を「11」のように、数字が欠けて読まれただけなら知らせない
+        if (String(calc).startsWith(String(stats[k])) && String(stats[k]).length < String(calc).length) continue;
         warnings.push(`${species}:${LABEL_OF[k]}の実数値が、読み取り${stats[k]}・計算${calc}で合いません。SP(${sp[k]})を確認してください`);
       }
     }
