@@ -31,18 +31,51 @@ function splitCards(obs) {
   return cards;
 }
 
-/** 辞書の中で一致するもの(1文字違いまで許す)を探す */
+// 読み違えやすい字(濁点・小さい字・ひらがなとカタカナの取り違え)をそろえた形
+const simple = s => s.normalize('NFD').replace(/[゙゚]/g, '').normalize('NFC')
+  .replace(/[ぁぃぅぇぉっゃゅょゎ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 1));
+const fold = s => simple(s.replace(/[ァ-ヶ]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60)));
+const foldCache = new Map();
+function folded(dict) {
+  if (!foldCache.has(dict)) {
+    const m = new Map();
+    for (const k of Object.keys(dict)) {
+      const f = fold(k);
+      m.set(f, m.has(f) && m.get(f) !== k ? null : k);  // 同じ形になるものが2つあれば決めない
+    }
+    foldCache.set(dict, m);
+  }
+  return foldCache.get(dict);
+}
+
+/**
+ * 辞書の中で一致するものを探す。完全一致 → 読み違えやすい字をそろえて一致 →
+ * 少しの違い(6文字以上なら2文字、それより短ければ1文字)まで。いちばん近いものが1つに決まるときだけ
+ */
 function lookup(text, dict) {
+  const r = lookupD(text, dict);
+  return r ? r.value : null;
+}
+
+/** lookup と同じだが、どれだけ違ったか(0 = そろえた形で一致)も返す */
+function lookupD(text, dict) {
   const t = norm(text).replace(/[♂♀]/g, '');
   if (!t) return null;
-  if (dict[t] !== undefined) return t;
+  if (dict[t] !== undefined) return {value: t, d: -1};
+  const fm = folded(dict);
+  const ft = fold(t);
+  if (fm.get(ft)) return {value: fm.get(ft), d: 0};
   if (t.length < 3) return null;
-  let best = null;
-  for (const k of Object.keys(dict)) {
-    if (Math.abs(k.length - t.length) > 1) continue;
-    if (distance(k, t) <= 1 && (!best || k.length > best.length)) best = k;
+  const limit = ft.length >= 6 ? 2 : 1;
+  let best = null, bestD = Infinity, tie = false;
+  for (const [f, k] of fm) {
+    if (!k || Math.abs(f.length - ft.length) > limit) continue;
+    const d = distance(f, ft);
+    if (d > limit) continue;
+    if (d < bestD) { best = k; bestD = d; tie = false; }
+    else if (d === bestD && k !== best) tie = true;
   }
-  return best;
+  return tie || !best ? null : {value: best, d: bestD};
 }
 
 function distance(a, b) {
@@ -67,11 +100,13 @@ const DICTS = [['species', NAMES.species], ['move', NAMES.moves], ['ability', NA
 function classify(text) {
   const t = norm(text).replace(/[♂♀]/g, '');
   for (const [kind, dict] of DICTS) if (dict[t] !== undefined) return {kind, value: t};
+  // 辞書をまたいで、いちばん近いもの(同じ近さなら名前・技・特性・持ち物の順)
+  let best = null;
   for (const [kind, dict] of DICTS) {
-    const v = lookup(t, dict);
-    if (v) return {kind, value: v};
+    const r = lookupD(t, dict);
+    if (r && (!best || r.d < best.d)) best = {kind, value: r.value, d: r.d};
   }
-  return null;
+  return best ? {kind: best.kind, value: best.value} : null;
 }
 
 /** 完全一致だけで判定する(つながった文字を区切るときに使う) */
@@ -111,21 +146,21 @@ function extract(text) {
 function readAbilityCard(card) {
   const sorted = [...card].sort((a, b) => (a.y - b.y) || (a.x - b.x));
   let species = null, ability = null, item = null;
-  const moves = [];
+  const moves = [], unknown = [];
   for (const o of sorted) {
-    for (const c of extract(o.text)) {
+    const found = extract(o.text);
+    if (!found.length && /[ぁ-ヶ一-龠A-Za-z]{2,}/.test(o.text)) unknown.push(String(o.text));
+    for (const c of found) {
       if (c.kind === 'species' && !species) species = c.value;
       else if (c.kind === 'move' && moves.length < 4 && !moves.includes(c.value)) moves.push(c.value);
       else if (c.kind === 'ability' && !ability) ability = c.value;
       else if (c.kind === 'item' && !item) item = c.value;
     }
   }
-  return {species, ability, item, moves, gender: gender(card)};
+  return {species, ability, item, moves, unknown, gender: gender(card)};
 }
 
 // ステータスのラベル。濁点・小さい字の読み違いに強くするため、比べるときは単純な形にする
-const simple = s => s.normalize('NFD').replace(/[゙゚]/g, '').normalize('NFC')
-  .replace(/[ぁぃぅぇぉっゃゅょゎ]/g, ch => String.fromCharCode(ch.charCodeAt(0) + 1));
 const SIMPLE_LABELS = LABELS.map(([l, k]) => [simple(l), k]);
 
 function labelKey(raw) {
@@ -195,6 +230,17 @@ function sample(obs, n) {
   return `読み取った文字(${n}枚目):` + (s.length > 260 ? s.slice(0, 260) + '…' : s || '(なし)');
 }
 
+const LABEL_OF = Object.fromEntries(LABELS.map(([l, k]) => [k, l]));
+
+/** 1つの能力について、実数値に合うSP(0〜32)を探す。1つに決まらなければ null */
+function solveSP(species, nature, sp, key, value) {
+  const hits = [];
+  for (let v = 0; v <= 32; v++) {
+    if (engine.stats({name: species, nature, sp: Object.assign({}, sp, {[key]: v})})[key] === value) hits.push(v);
+  }
+  return hits.length === 1 ? hits[0] : null;
+}
+
 /** 実数値とSPに合う性格を探す。合うものがなければ、一番近いもの */
 function findNature(species, sp, stats) {
   let best = null;
@@ -253,11 +299,20 @@ function importParty(images) {
     if (st && Object.keys(stats).length) {
       const n = findNature(species, sp, stats);
       if (n && n.nature) nature = n.nature;
-      if (n && n.mismatch.length) warnings.push(`${species}:実数値が計算と合わない能力があります(${n.mismatch.join('・')})。SPを確認してください`);
+      for (const k of (n && n.nature ? n.mismatch : [])) {
+        // SPの数字だけ読み違えた場合:読めた実数値に合うSPを計算で探す
+        const fix = solveSP(species, nature, sp, k, stats[k]);
+        if (fix !== null) { sp[k] = fix; continue; }
+        const calc = engine.stats({name: species, nature, sp})[k];
+        warnings.push(`${species}:${LABEL_OF[k]}の実数値が、読み取り${stats[k]}・計算${calc}で合いません。SP(${sp[k]})を確認してください`);
+      }
     }
     const total = Object.values(sp).reduce((x, y) => x + y, 0);
     if (total > 66) warnings.push(`${species}:SPの合計が${total}で、66を超えています`);
-    if (a && a.moves.length < 4) warnings.push(`${species}:技を${a.moves.length}つしか読めませんでした`);
+    if (a && a.moves.length < 4) {
+      const rest = a.unknown.filter(t => !/^(Lv|能力|ステータス)/.test(t)).slice(0, 6);
+      warnings.push(`${species}:技を${a.moves.length}つしか読めませんでした` + (rest.length ? `(読めなかった文字:${rest.join(' / ')})` : ''));
+    }
 
     members.push({
       species,

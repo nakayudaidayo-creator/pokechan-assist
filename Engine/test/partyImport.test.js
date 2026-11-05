@@ -143,3 +143,38 @@ test('ステータスの画面が読めないときは、読み取った文字�
   assert.ok(warnings.some(w => /ステータス/.test(w)));
   assert.ok(warnings.some(w => /^読み取った文字\(2枚目\)/.test(w) && /なにか/.test(w)));
 });
+
+test('SPの数字だけ読めなかったときは、実数値から計算で補う', () => {
+  // カバルドンのHPの行で、SP「32」が読めなかった場合(実機で起きた)
+  const st = statusScreen(team6);
+  const i = st.findIndex(o => o.text === '32' && o.y < 0.31 && o.x < 0.32);
+  st.splice(i, 1);
+  const {members, warnings} = importParty([abilityScreen(team6), st]);
+  assert.strictEqual(members[0].sp.hp, 32);
+  assert.deepStrictEqual(warnings, []);
+});
+
+test('実数値を読み違えたときは、読み取りと計算の両方の値を出して知らせる', () => {
+  const st = statusScreen(team6).map(o => (o.text === '117' ? Object.assign({}, o, {text: '177'}) : o));
+  const {members, warnings} = importParty([abilityScreen(team6), st]);
+  assert.strictEqual(members[1].nature, 'ひかえめ');
+  assert.ok(warnings.some(w => /ルカリオ:こうげきの実数値が、読み取り177・計算117/.test(w)), warnings.join('\n'));
+});
+
+test('濁点・小さい字・ひらがなとカタカナの読み違いや、長い技名の2文字違いも拾う', () => {
+  const ab = abilityScreen(team6).map(o => {
+    if (o.text === 'かえんほうしゃ') return Object.assign({}, o, {text: 'かえんぼうしや'});
+    if (o.text === 'アクアジェット') return Object.assign({}, o, {text: 'アクアシエット'});
+    if (o.text === 'ウェーブタックル') return Object.assign({}, o, {text: 'ウエーブタツクル'});
+    return o;
+  });
+  const {members} = importParty([ab, statusScreen(team6)]);
+  assert.deepStrictEqual(members[2].moves, team6[2].moves);
+  assert.deepStrictEqual(members[5].moves, team6[5].moves);
+});
+
+test('技が読めなかったときは、読めなかった文字を確認画面に出す', () => {
+  const ab = abilityScreen(team6).map(o => (o.text === 'しんそく' ? Object.assign({}, o, {text: 'ぜんぜんちがう'}) : o));
+  const {warnings} = importParty([ab, statusScreen(team6)]);
+  assert.ok(warnings.some(w => /カイリュー:技を3つしか読めませんでした\(読めなかった文字:ぜんぜんちがう\)/.test(w)), warnings.join('\n'));
+});
