@@ -7,6 +7,7 @@ import calc from '../vendor/smogon-calc.js';
 import pip from './pip.js';
 import screenModule from './screen.js';
 import partyImport from './partyImport.js';
+import bundledParty from '../../Data/party.json';
 
 const {Battle} = battleModule;
 const {ScreenReader} = screenModule;
@@ -63,10 +64,22 @@ const api = {
 
 // 対戦中の状態は1つだけ持つ
 let battle = null;
-let party = [];
+// アプリからパーティが届く前(計算エンジンを更新した直後など)は、最初から入っているチーム6を使う
+let party = withStats(bundledParty.members || []);
 const reader = new ScreenReader();
+reader.party = party.map(p => p.species);
+
+/** バトル状態に渡す形(最大HPのために実数値も付ける) */
+function withStats(members) {
+  return members.map(m => {
+    const d = Object.assign({}, m, {name: m.species});
+    try { d.stats = engine.stats(d); } catch (e) { /* 実数値が出せなくても続ける */ }
+    return d;
+  });
+}
 api.setParty = input => {
-  party = input.party || [];
+  if (!input.party || !input.party.length) return party.length;  // 空のパーティは受け取らない(チーム6のまま)
+  party = input.party;
   reader.party = party.map(p => p.species || p.name).filter(Boolean);
   return party.length;
 };
@@ -84,7 +97,7 @@ api.screenRead = input => {
   return {mode: r.mode, newBattle: r.newBattle, inputs: r.inputs, debug: r.debug};
 };
 api.battleFeed = input => {
-  if (!battle) battle = new Battle({});
+  if (!battle) battle = new Battle({party, opponentTeam: []});
   for (const i of (Array.isArray(input) ? input : [input])) battle.feed(i);
   return battle.summary();
 };
