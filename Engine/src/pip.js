@@ -22,25 +22,8 @@ function row(move, r, extra) {
   return Object.assign({move, min: Math.floor(r.minPercent), max: Math.floor(r.maxPercent), ko: shortKO(r.ko)}, extra || {});
 }
 
-/**
- * @param {Battle} battle
- * @returns 小窓の表示データ(Swift側でそのまま描く)
- */
-function buildView(battle) {
-  const meSide = battle.sides.me, oppSide = battle.sides.opp;
-  const meMon = meSide.active && meSide.mons[meSide.active];
-  const oppMon = oppSide.active && oppSide.mons[oppSide.active];
-  if (!meMon || !oppMon) {
-    return {title: 'ポケチャン補助', waiting: true, message: meMon ? '相手のポケモンを読み取り中' : '対戦の開始を待っています'};
-  }
-  const member = battle.myMember(meMon.species) || {species: meMon.species};
-  const myPoke = {
-    name: member.species, form: meMon.form, nature: member.nature, sp: member.sp,
-    ability: member.ability, item: meMon.itemRemoved ? undefined : member.item,
-    status: meMon.status, hpPercent: meMon.hpPercent, boosts: boostsJa(meMon.boosts),
-  };
-
-  // この相手について集まった手がかり
+/** 相手の1匹について、集まった手がかりから型を推定する */
+function analyze(battle, oppMon) {
   const hitsTaken = [], hitsDealt = [];
   for (const d of battle.damageLog) {
     const input = battle.toCalcInput(d);
@@ -58,7 +41,6 @@ function buildView(battle) {
     if (!mine) continue;
     speed.push({oppFirst: s.first === 'opp', mySpeed: effectiveSpeed({name: mine.species, nature: mine.nature, sp: mine.sp, item: mine.item})});
   }
-
   const oppKnown = {
     species: oppMon.species, form: oppMon.form, mega: oppMon.mega,
     ability: oppMon.ability, item: oppMon.item, itemRemoved: oppMon.itemRemoved,
@@ -68,6 +50,57 @@ function buildView(battle) {
   const {candidates} = inferSets(oppKnown, {hitsTaken, hitsDealt, speed});
   const best = candidates[0];
   const oppPoke = Object.assign(toPokemon(oppMon.species, best.set, oppKnown), {boosts: boostsJa(oppMon.boosts)});
+  return {candidates, best, oppPoke};
+}
+
+/** 小窓のページの並び:0 = 場の相手、1以降 = 控え(倒れていない、出てきたことのある相手) */
+function pages(battle) {
+  const oppSide = battle.sides.opp;
+  const active = oppSide.active;
+  const bench = Object.values(oppSide.mons).filter(m => m.species !== active && !m.fainted).map(m => m.species);
+  return active ? [active, ...bench] : [];
+}
+
+/** 控えの相手の1行まとめ(小窓の下に常に出す) */
+function benchSummary(battle) {
+  const oppSide = battle.sides.opp;
+  const seen = Object.values(oppSide.mons).filter(m => m.species !== oppSide.active);
+  const list = seen.map(m => {
+    if (m.fainted) return {species: m.species, fainted: true};
+    const {best} = analyze(battle, m);
+    return {species: m.species, hpPercent: m.hpPercent, moves: m.moves.slice(0, 2), setName: best.set.name};
+  });
+  // 選出画面で分かった6匹のうち、まだ出てきていない相手
+  const team = battle.opponentTeam || [];
+  const remaining = team.filter(n => !oppSide.mons[n]);
+  return {list, remaining};
+}
+
+/**
+ * @param {Battle} battle
+ * @param {{page?: number}} opts page = 0:場の相手 / 1以降:控え
+ * @returns 小窓の表示データ(Swift側でそのまま描く)
+ */
+function buildView(battle, opts = {}) {
+  const meSide = battle.sides.me, oppSide = battle.sides.opp;
+  const meMon = meSide.active && meSide.mons[meSide.active];
+  const order = pages(battle);
+  if (!meMon || !order.length) {
+    return {title: 'ポケチャン補助', waiting: true, message: meMon ? '相手のポケモンを読み取り中' : '対戦の開始を待っています'};
+  }
+  const page = ((opts.page || 0) % order.length + order.length) % order.length;
+  const oppMon = oppSide.mons[order[page]];
+  const isBench = page > 0;
+
+  const member = battle.myMember(meMon.species) || {species: meMon.species};
+  const myPoke = {
+    name: member.species, form: meMon.form, nature: member.nature, sp: member.sp,
+    ability: member.ability, item: meMon.itemRemoved ? undefined : member.item,
+    status: meMon.status, hpPercent: meMon.hpPercent, boosts: boostsJa(meMon.boosts),
+  };
+
+  const {candidates, best, oppPoke} = analyze(battle, oppMon);
+  if (isBench) oppPoke.boosts = {}; // 控えはランク変化なし
   const field = {weather: battle.field.weather || undefined};
 
   // こちらの技 → 相手
@@ -96,8 +129,11 @@ function buildView(battle) {
   const speedText = mySpe > oppSpe ? 'me' : mySpe < oppSpe ? 'opp' : 'tie';
 
   const assumedItem = oppMon.itemRemoved ? null : (oppMon.item || best.set.item);
+  const bench = benchSummary(battle);
   return {
-    title: `${meMon.species} ⇄ ${oppMon.species}`,
+    title: `${meMon.species} ⇄ ${oppMon.species}${isBench ? '(控え)' : ''}`,
+    page, pageCount: order.length,
+    pageLabel: isBench ? `控え ${page}/${order.length - 1}` : (order.length > 1 ? '対面' : ''),
     oppHpPercent: oppMon.hpPercent,
     known: {
       ability: oppMon.ability ? {value: oppMon.ability, sure: true} : (best.set.ability ? {value: best.set.ability, sure: false} : null),
@@ -108,8 +144,10 @@ function buildView(battle) {
     candidates: [...new Set(candidates.map(c => c.set.name))].slice(0, 3),
     speed: {who: speedText, me: mySpe, opp: oppSpe, mySpeedNote: /こだわりスカーフ/.test(myPoke.item || '') ? 'スカーフ込み' : ''},
     mine, theirs,
+    bench: bench.list.filter(b => b.species !== oppMon.species).concat(isBench ? [{species: order[0], active: true, hpPercent: oppSide.mons[order[0]].hpPercent}] : []),
+    remaining: bench.remaining,
     note: assumedItem === 'きあいのタスキ' && oppMon.hpPercent === 100 ? 'タスキ:HP満タンからは1発で倒せない' : '',
   };
 }
 
-module.exports = {buildView};
+module.exports = {buildView, pages};

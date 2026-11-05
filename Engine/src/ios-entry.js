@@ -63,7 +63,7 @@ let battle = null;
 let party = [];
 const reader = new ScreenReader();
 api.setParty = input => { party = input.party || []; return party.length; };
-api.battleStart = input => { battle = new Battle(input); return battle.summary(); };
+api.battleStart = input => { battle = new Battle(input); pipPage = 0; return battle.summary(); };
 
 /**
  * 画面の文字認識の結果を受け取り、バトル状態を更新する。
@@ -71,7 +71,7 @@ api.battleStart = input => { battle = new Battle(input); return battle.summary()
  */
 api.screenRead = input => {
   const r = reader.read(input.observations || []);
-  if (r.newBattle || (!battle && r.inputs.length)) battle = new Battle({party, opponentTeam: []});
+  if (r.newBattle || (!battle && r.inputs.length)) { battle = new Battle({party, opponentTeam: []}); pipPage = 0; }
   if (battle) for (const i of r.inputs) battle.feed(i);
   return {mode: r.mode, newBattle: r.newBattle, inputs: r.inputs, debug: r.debug};
 };
@@ -80,8 +80,23 @@ api.battleFeed = input => {
   for (const i of (Array.isArray(input) ? input : [input])) battle.feed(i);
   return battle.summary();
 };
+/** 小窓のページ:0 = 場の相手、1以降 = 控え。場の相手が変わったら0に戻す */
+let pipPage = 0;
+let pipActive = null;
+api.pipPage = input => {
+  if (!battle) return 0;
+  const n = pip.pages(battle).length || 1;
+  pipPage = input.reset ? 0 : ((pipPage + (input.delta || 0)) % n + n) % n;
+  return pipPage;
+};
+
 /** 小窓(案A)に出す内容 */
-api.pipView = () => (battle ? pip.buildView(battle) : {title: 'ポケチャン補助', waiting: true, message: '対戦の開始を待っています'});
+api.pipView = () => {
+  if (!battle) return {title: 'ポケチャン補助', waiting: true, message: '対戦の開始を待っています'};
+  const active = battle.sides.opp.active;
+  if (active !== pipActive) { pipActive = active; pipPage = 0; }
+  return pip.buildView(battle, {page: pipPage});
+};
 
 globalThis.pokechanCall = function (name, json) {
   try {

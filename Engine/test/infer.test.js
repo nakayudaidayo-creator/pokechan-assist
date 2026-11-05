@@ -65,3 +65,25 @@ test('型データがないポケモンでも、汎用の型で計算できる',
   assert.ok(v.candidates.length >= 1);
   assert.ok(v.mine.length >= 3);
 });
+
+test('控え:交代した相手は小窓の下にまとめて出し、ページを切り替えると詳しく見られる', () => {
+  const b = start('イダイトウ', 'ガブリアス').feedAll([
+    T('相手の ガブリアスの じしん!'),
+    {kind: 'hp', side: 'me', name: 'イダイトウ', cur: 70, max: 197},
+    T('相手トレーナーは ボーマンダを 繰り出した!'),
+  ]);
+  const front = buildView(b, {page: 0});
+  assert.strictEqual(front.title, 'イダイトウ ⇄ ボーマンダ');
+  assert.strictEqual(front.pageCount, 2);
+  assert.strictEqual(front.bench.length, 1);
+  assert.strictEqual(front.bench[0].species, 'ガブリアス');
+  assert.deepStrictEqual(front.bench[0].moves, ['じしん']);
+  assert.ok(front.bench[0].setName, '控えの相手にも型の候補が出る');
+
+  const benchPage = buildView(b, {page: 1});
+  assert.strictEqual(benchPage.title, 'イダイトウ ⇄ ガブリアス(控え)');
+  assert.strictEqual(benchPage.pageLabel, '控え 1/1');
+  assert.ok(benchPage.theirs[0].used && benchPage.theirs[0].move === 'じしん');
+  assert.strictEqual(benchPage.bench[0].species, 'ボーマンダ', '控えのページでは場の相手が下に出る');
+  assert.strictEqual(buildView(b, {page: 2}).title, front.title, '最後のページの次は対面に戻る');
+});
