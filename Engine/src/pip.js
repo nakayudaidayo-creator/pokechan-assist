@@ -53,12 +53,30 @@ function analyze(battle, oppMon) {
   return {candidates, best, oppPoke};
 }
 
-/** 小窓のページの並び:0 = 場の相手、1以降 = 控え(倒れていない、出てきたことのある相手) */
+/**
+ * 相手側のページの並び:0 = 場の相手、1以降 = 控え。
+ * 控えは「出てきたことのある相手(倒れていない)」→「まだ出ていない候補」の順。
+ * まだ出ていない候補は選出画面で分かった6匹の残りで、相手の3匹が出そろったら出さない
+ */
 function pages(battle) {
   const oppSide = battle.sides.opp;
   const active = oppSide.active;
+  if (!active) return [];
   const bench = Object.values(oppSide.mons).filter(m => m.species !== active && !m.fainted).map(m => m.species);
-  return active ? [active, ...bench] : [];
+  return [active, ...bench, ...unseen(battle)];
+}
+
+/** 選出画面で分かった相手の6匹のうち、まだ出てきていない相手(3匹出そろったら空) */
+function unseen(battle) {
+  const seen = Object.keys(battle.sides.opp.mons);
+  if (seen.length >= 3) return [];
+  return (battle.opponentTeam || []).filter(n => !seen.includes(n));
+}
+
+/** まだ出てきていない相手を、何も分かっていない状態のポケモンとして扱う */
+function placeholder(species) {
+  return {species, form: undefined, mega: false, hpPercent: 100, boosts: {}, status: undefined,
+    ability: undefined, item: undefined, itemRemoved: false, moves: [], movesThisSwitch: [], fainted: false, unseen: true};
 }
 
 /** 自分側のページの並び:0 = 場のポケモン、1以降 = 交代先(選出した3匹のうち、倒れていないもの) */
@@ -79,10 +97,7 @@ function benchSummary(battle) {
     const {best} = analyze(battle, m);
     return {species: m.species, hpPercent: m.hpPercent, moves: m.moves.slice(0, 2), setName: best.set.name};
   });
-  // 選出画面で分かった6匹のうち、まだ出てきていない相手
-  const team = battle.opponentTeam || [];
-  const remaining = team.filter(n => !oppSide.mons[n]);
-  return {list, remaining};
+  return {list, remaining: unseen(battle)};
 }
 
 /**
@@ -98,7 +113,7 @@ function buildView(battle, opts = {}) {
     return {title: 'ポケチャン補助', waiting: true, message: activeMe ? '相手のポケモンを読み取り中' : '対戦の開始を待っています'};
   }
   const page = ((opts.page || 0) % order.length + order.length) % order.length;
-  const oppMon = oppSide.mons[order[page]];
+  const oppMon = oppSide.mons[order[page]] || placeholder(order[page]);
   const isBench = page > 0;
 
   // 自分側:0 = 場のポケモン、1以降 = 交代先(まだ出ていなければHP満タン・ランク変化なし)
@@ -146,7 +161,7 @@ function buildView(battle, opts = {}) {
   const assumedItem = oppMon.itemRemoved ? null : (oppMon.item || best.set.item);
   const bench = benchSummary(battle);
   return {
-    title: `${meMon.species}${isMyBench ? '(交代先)' : ''} ⇄ ${oppMon.species}${isBench ? '(控え)' : ''}`,
+    title: `${meMon.species}${isMyBench ? '(交代先)' : ''} ⇄ ${oppMon.species}${oppMon.unseen ? '(まだ出ていない)' : isBench ? '(控え)' : ''}`,
     page, pageCount: order.length, myPage: myIdx, myPageCount: myOrder.length,
     pageLabel: [isMyBench ? `交代先 ${myIdx}/${myOrder.length - 1}` : '', isBench ? `相手の控え ${page}/${order.length - 1}` : '']
       .filter(Boolean).join('・') || '対面',

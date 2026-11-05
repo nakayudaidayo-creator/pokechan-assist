@@ -99,3 +99,20 @@ test('自分の交代先:選出した3匹のうち場にいないポケモンで
   assert.strictEqual(buildView(b, {myPage: 2}).title, 'ミミッキュ(交代先) ⇄ ガブリアス');
   assert.strictEqual(buildView(b, {myPage: 3}).title, 'イダイトウ ⇄ ガブリアス', '最後の次は場の対面に戻る');
 });
+
+test('相手の控えが分からない間は、選出画面の6匹のうちまだ出ていない全員を順番に見られる', () => {
+  const b = new Battle({party: team6, opponentTeam: ['バンギラス', 'ロトム', 'サーフゴー', 'ミミッキュ', 'エースバーン', 'ガブリアス']})
+    .feedAll([T('ゆけっ! イダイトウ!'), T('相手トレーナーは ガブリアスを 繰り出した!')]);
+  const front = buildView(b, {page: 0});
+  assert.strictEqual(front.pageCount, 6, '場の1匹 + まだ出ていない5匹');
+  assert.deepStrictEqual(front.remaining, ['バンギラス', 'ロトム', 'サーフゴー', 'ミミッキュ', 'エースバーン']);
+  const p1 = buildView(b, {page: 1});
+  assert.strictEqual(p1.title, 'イダイトウ ⇄ バンギラス(まだ出ていない)');
+  assert.ok(p1.mine.length >= 3 && p1.theirs.length >= 2, 'よくある型で計算できる');
+
+  // 3匹出そろったら、残りの候補は出さない
+  b.feedAll([T('相手トレーナーは サーフゴーを 繰り出した!'), T('相手トレーナーは ミミッキュを 繰り出した!')]);
+  const after = buildView(b, {page: 0});
+  assert.strictEqual(after.pageCount, 3);
+  assert.deepStrictEqual(after.remaining, []);
+});
