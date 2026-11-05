@@ -105,7 +105,8 @@ class Battle {
       case 'switchIn': {
         const side = ev.side || this.sideOf(ev.species);
         this.closeAction();
-        this.setActive(side, ev.species);
+        // テロップと名前表示の両方から同じ交代が届くことがあるので、すでに場にいれば何もしない
+        if (this.sides[side].active !== ev.species) this.setActive(side, ev.species);
         break;
       }
       case 'switchOut':

@@ -5,8 +5,10 @@ import engine from './engine.js';
 import battleModule from './battle.js';
 import calc from '../vendor/smogon-calc.js';
 import pip from './pip.js';
+import screenModule from './screen.js';
 
 const {Battle} = battleModule;
+const {ScreenReader} = screenModule;
 const MOVE_DATA = calc.Generations.get(0).moves;
 
 /** 技の分類(物理・特殊・変化) */
@@ -58,7 +60,21 @@ const api = {
 
 // 対戦中の状態は1つだけ持つ
 let battle = null;
+let party = [];
+const reader = new ScreenReader();
+api.setParty = input => { party = input.party || []; return party.length; };
 api.battleStart = input => { battle = new Battle(input); return battle.summary(); };
+
+/**
+ * 画面の文字認識の結果を受け取り、バトル状態を更新する。
+ * 選出画面を見たら新しい対戦として始め直す。
+ */
+api.screenRead = input => {
+  const r = reader.read(input.observations || []);
+  if (r.newBattle || (!battle && r.inputs.length)) battle = new Battle({party, opponentTeam: []});
+  if (battle) for (const i of r.inputs) battle.feed(i);
+  return {mode: r.mode, newBattle: r.newBattle, inputs: r.inputs, debug: r.debug};
+};
 api.battleFeed = input => {
   if (!battle) battle = new Battle({});
   for (const i of (Array.isArray(input) ? input : [input])) battle.feed(i);

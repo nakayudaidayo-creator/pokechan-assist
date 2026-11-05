@@ -4,6 +4,7 @@ import UIKit
 final class AppState: ObservableObject {
     let pip = PiPController()
     let receiver = BroadcastReceiver()
+    let frames = FrameReceiver()
     let updater = EngineUpdater()
 
     /// 対戦の状態は計算エンジンの中にあるので、対戦中はエンジンを入れ替えない
@@ -11,6 +12,9 @@ final class AppState: ObservableObject {
 
     @Published private(set) var view: PipViewModel = .message("画面収録を開始するか、計算タブで対面を選んでください")
     @Published private(set) var image: UIImage = PipRenderer.render(.message("画面収録を開始するか、計算タブで対面を選んでください"))
+    /// 画面の読み取りで最後に分かったこと(動作確認タブに表示)
+    @Published private(set) var lastScreenMode = "-"
+    @Published private(set) var lastScreenInputs: [String] = []
 
     private var started = false
 
@@ -21,6 +25,10 @@ final class AppState: ObservableObject {
             self?.feed(inputs)
         }
         receiver.start()
+        frames.onObservations = { [weak self] obs in
+            self?.screen(obs)
+        }
+        frames.start()
         pip.imageProvider = { [weak self] in
             self?.image ?? PipRenderer.render(.message("待機中"))
         }
@@ -29,6 +37,11 @@ final class AppState: ObservableObject {
         updater.canSwitchNow = { [weak self] in !(self?.battleActive ?? false) }
         updater.onSwitched = { [weak self] in self?.refresh() }
         updater.check()
+    }
+
+    /// 自分のパーティを計算エンジンに渡す(画面の読み取りで対戦が始まったときに使う)
+    func setParty(_ party: [Member]) {
+        _ = EngineBridge.shared.call("setParty", ["party": party.map { battleDict($0) }])
     }
 
     /// 対戦を始める(自分のパーティと、分かっていれば相手の6匹)
@@ -43,6 +56,22 @@ final class AppState: ObservableObject {
     func feed(_ inputs: [[String: Any]]) {
         _ = EngineBridge.shared.call("battleFeed", inputs)
         refresh()
+    }
+
+    /// 画面の文字認識の結果を渡す
+    func screen(_ observations: [TextObservation]) {
+        battleActive = true
+        guard let r = EngineBridge.shared.call("screenRead", ["observations": observations.map { $0.dict }]) as? [String: Any] else { return }
+        lastScreenMode = r["mode"] as? String ?? "-"
+        let inputs = (r["inputs"] as? [[String: Any]]) ?? []
+        if !inputs.isEmpty {
+            let lines = inputs.map { i -> String in
+                [i["kind"], i["side"], i["name"], i["text"], i["percent"], i["cur"]]
+                    .compactMap { $0.map { "\($0)" } }.joined(separator: " ")
+            }
+            lastScreenInputs = Array((lines + lastScreenInputs).prefix(12))
+            refresh()
+        }
     }
 
     func refresh() {

@@ -15,11 +15,17 @@ struct ContentView: View {
                     .tabItem { Label("計算", systemImage: "function") }
                 PartyView(party: party)
                     .tabItem { Label("パーティ", systemImage: "person.3") }
-                DiagnosticsView(receiver: state.receiver, updater: state.updater)
+                DiagnosticsView(state: state, receiver: state.receiver, frames: state.frames, updater: state.updater)
                     .tabItem { Label("動作確認", systemImage: "wrench.and.screwdriver") }
             }
         }
-        .onAppear { state.start() }
+        .onAppear {
+            state.start()
+            state.setParty(party.members)
+        }
+        .onChange(of: party.members) { _, members in
+            state.setParty(members)
+        }
     }
 }
 
@@ -96,7 +102,9 @@ struct BroadcastPickerView: UIViewRepresentable {
 
 /// 動作確認:画面録画の開始と、拡張機能からの受信状況
 struct DiagnosticsView: View {
+    @ObservedObject var state: AppState
     @ObservedObject var receiver: BroadcastReceiver
+    @ObservedObject var frames: FrameReceiver
     @ObservedObject var updater: EngineUpdater
 
     var body: some View {
@@ -116,6 +124,32 @@ struct DiagnosticsView: View {
                         Text("状態: \(receiver.status) / 受信 \(receiver.receivedCount)件")
                         Text(receiver.lastMessage).font(.footnote).foregroundColor(.secondary)
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                GroupBox("画面の読み取り") {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("状態: \(frames.status) / 受信 \(frames.framesReceived)枚 / 文字認識 \(frames.lastOCRMillis)ms")
+                        Text("画面の種類: \(state.lastScreenMode)")
+                        if let img = frames.lastImage {
+                            Image(uiImage: img)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                        }
+                        if !state.lastScreenInputs.isEmpty {
+                            Text("読み取った出来事(新しい順)").font(.caption).bold()
+                            ForEach(Array(state.lastScreenInputs.enumerated()), id: \.offset) { _, line in
+                                Text(line).font(.caption)
+                            }
+                        }
+                        DisclosureGroup("認識した文字(\(frames.lastLines.count)件)") {
+                            ForEach(Array(frames.lastLines.enumerated()), id: \.offset) { _, line in
+                                Text(line).font(.caption2).frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                        }
+                        .font(.caption)
+                    }
+                    .font(.footnote)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 GroupBox("計算エンジン") {

@@ -87,7 +87,8 @@ function parseTelop(raw) {
   if (/急所に当たった/.test(text)) return [{type: 'crit'}];
 
   // 交代(トレーナー名は何でもよいので、末尾のポケモン名で判断する)
-  if ((m = text.match(/^(.+?)は(.+)を繰り出した!?$/))) return [{type: 'switchIn', trainer: m[1], species: m[2]}];
+  // 自分の繰り出しは「ゆけっ!」なので、「(トレーナー)は Xを 繰り出した!」は相手側
+  if ((m = text.match(/^(.+?)は(.+)を繰り出した!?$/))) return [{type: 'switchIn', side: 'opp', trainer: m[1], species: m[2]}];
   if ((m = text.match(/^ゆけっ!?(.+?)!?$/))) return [{type: 'switchIn', side: 'me', species: m[1]}];
   if ((m = text.match(/^(.+?)は(.+)を引っこめた!?$/))) return [{type: 'switchOut', trainer: m[1], species: m[2]}];
   if ((m = text.match(/^(.+?)!?戻れ!?$/))) return [{type: 'switchOut', side: 'me', species: m[1]}];
@@ -181,6 +182,7 @@ function parse(input) {
     case 'telop': return parseTelop(input.text);
     case 'banner': return parseBanner(input.side, input.text);
     case 'log': return parseLog(input.text);
+    case 'switch': return [{type: 'switchIn', side: input.side, species: norm(input.name)}];
     case 'hp': {
       const e = {type: 'hp', side: input.side, species: norm(input.name), source: 'bar'};
       if (input.percent !== undefined) e.percent = input.percent;
